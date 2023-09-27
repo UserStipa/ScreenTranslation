@@ -5,9 +5,6 @@ import android.graphics.PixelFormat
 import android.media.Image
 import android.media.ImageReader
 import android.media.projection.MediaProjection
-import android.os.Handler
-import android.os.HandlerThread
-import android.os.Process
 import com.userstipa.screentranslation.ui.uitls.virtualdisplay_util.VirtualDisplayUtil
 import java.nio.ByteBuffer
 import javax.inject.Inject
@@ -24,11 +21,7 @@ class ScreenshotUtilImpl @Inject constructor(
 
     override suspend fun createScreenshot(mediaProjection: MediaProjection): Bitmap {
 
-        val handlerThread = HandlerThread(javaClass.simpleName, Process.THREAD_PRIORITY_BACKGROUND)
-        handlerThread.start()
-        val handler = Handler(handlerThread.looper)
-
-        val virtualDisplay = virtualDisplayUtil.create(handler, mediaProjection)
+        val virtualDisplay = virtualDisplayUtil.create(mediaProjection)
         val imageReader =
             ImageReader.newInstance(displayWidth, displayHeight, PixelFormat.RGBA_8888, 2)
         virtualDisplay.surface = imageReader.surface
@@ -42,12 +35,10 @@ class ScreenshotUtilImpl @Inject constructor(
                 } catch (e: Exception) {
                     continuation.resumeWithException(e)
                 } finally {
-                    handlerThread.quitSafely()
-                    handler.removeCallbacksAndMessages(null)
                     virtualDisplay.release()
                     imageReader.close()
                 }
-            }, handler)
+            }, null)
         }
     }
 

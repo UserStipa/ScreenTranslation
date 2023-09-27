@@ -5,7 +5,6 @@ import android.hardware.display.DisplayManager
 import android.hardware.display.VirtualDisplay
 import android.media.projection.MediaProjection
 import android.os.Build
-import android.os.Handler
 import android.util.DisplayMetrics
 import android.view.WindowManager
 
@@ -16,7 +15,7 @@ class VirtualDisplayUtilImpl constructor(
     private val windowManager = context.getSystemService(Context.WINDOW_SERVICE) as WindowManager
     private val displayMetrics = DisplayMetrics()
 
-    override fun create(handler: Handler, mediaProjection: MediaProjection): VirtualDisplay {
+    override fun create(mediaProjection: MediaProjection): VirtualDisplay {
         val densityDpi = context.resources.displayMetrics.densityDpi
         return mediaProjection.createVirtualDisplay(
             VIRTUAL_DISPLAY_NAME,
@@ -26,7 +25,7 @@ class VirtualDisplayUtilImpl constructor(
             DisplayManager.VIRTUAL_DISPLAY_FLAG_AUTO_MIRROR or DisplayManager.VIRTUAL_DISPLAY_FLAG_OWN_CONTENT_ONLY,
             null,
             null,
-            handler
+            null
         )
     }
 

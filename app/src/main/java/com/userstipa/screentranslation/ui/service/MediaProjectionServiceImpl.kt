@@ -7,6 +7,8 @@ import android.content.Intent
 import android.media.projection.MediaProjection
 import android.media.projection.MediaProjectionManager
 import android.os.Binder
+import android.os.Handler
+import android.os.HandlerThread
 import android.os.IBinder
 import com.userstipa.screentranslation.App
 import com.userstipa.screentranslation.domain.text_scanner.TextScanner
@@ -14,8 +16,8 @@ import com.userstipa.screentranslation.domain.text_translate.TextTranslation
 import com.userstipa.screentranslation.ui.uitls.notification_util.NotificationUtil
 import com.userstipa.screentranslation.ui.uitls.screenshot_util.ScreenshotUtil
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.android.asCoroutineDispatcher
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -34,9 +36,17 @@ class MediaProjectionServiceImpl : Service(), MediaProjectionService {
     lateinit var textTranslator: TextTranslation
 
     private val binder = LocalBinder()
-    private val job = SupervisorJob()
-    private val serviceScope = CoroutineScope(Dispatchers.Default + job)
     private var mediaProjection: MediaProjection? = null
+
+    private val job = SupervisorJob()
+    private var serviceCoroutineScope: CoroutineScope
+
+    init {
+        val handlerThread = HandlerThread("ServiceThread").also { it.start() }
+        val handler = Handler(handlerThread.looper)
+        val dispatcher = handler.asCoroutineDispatcher("ServiceDispatcher")
+        serviceCoroutineScope = CoroutineScope(dispatcher + job)
+    }
 
     override fun onCreate() {
         super.onCreate()
@@ -54,7 +64,8 @@ class MediaProjectionServiceImpl : Service(), MediaProjectionService {
 
     override fun translateScreen() {
         if (mediaProjection == null) return
-        serviceScope.launch {
+
+        serviceCoroutineScope.launch {
             val image = screenshotUtil.createScreenshot(mediaProjection!!)
             val text = textScanner.getText(image)
             val translatedText = textTranslator.translate(text, "auto", "ru")
