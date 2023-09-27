@@ -20,7 +20,6 @@ class TranslatorActivity : AppCompatActivity(), ServiceConnection {
 
     private lateinit var binding: ActivityTranslatorBinding
     private lateinit var service: MediaProjectionServiceImpl
-    private lateinit var mediaProjectionManager: MediaProjectionManager
     private var isServiceConnected = false
 
     private val requestProjection =
@@ -43,8 +42,6 @@ class TranslatorActivity : AppCompatActivity(), ServiceConnection {
         WindowCompat.setDecorFitsSystemWindows(window, false)
         super.onCreate(savedInstanceState)
         binding = ActivityTranslatorBinding.inflate(layoutInflater)
-        mediaProjectionManager =
-            getSystemService(Context.MEDIA_PROJECTION_SERVICE) as MediaProjectionManager
         setContentView(binding.root)
         connectToService()
     }
@@ -65,7 +62,8 @@ class TranslatorActivity : AppCompatActivity(), ServiceConnection {
     }
 
     private fun requestPermission() {
-        val intent = mediaProjectionManager.createScreenCaptureIntent()
+        val manager = getSystemService(Context.MEDIA_PROJECTION_SERVICE) as MediaProjectionManager
+        val intent = manager.createScreenCaptureIntent()
         requestProjection.launch(intent)
     }
 

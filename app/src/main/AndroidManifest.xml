@@ -38,7 +38,7 @@
             android:exported="false"
             android:noHistory="true"
             android:taskAffinity=".ui.scanner_activity.ScannerTranslateActivity"
-            android:theme="@style/AppTheme">
+            android:theme="@style/AppTheme.TranslatorActivity">
 
         </activity>
     </application>
