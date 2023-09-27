@@ -7,7 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.userstipa.screentranslation.databinding.FragmentFirstBinding
-import com.userstipa.screentranslation.ui.service.MediaProjectionService
+import com.userstipa.screentranslation.ui.service.MediaProjectionServiceImpl
 
 /**
  * A simple [Fragment] subclass as the default destination in the navigation.
@@ -38,7 +38,7 @@ class HomeFragment : Fragment() {
     }
 
     private fun startService() {
-        Intent(requireContext(), MediaProjectionService::class.java).also {
+        Intent(requireContext(), MediaProjectionServiceImpl::class.java).also {
             requireContext().startForegroundService(it)
         }
     }

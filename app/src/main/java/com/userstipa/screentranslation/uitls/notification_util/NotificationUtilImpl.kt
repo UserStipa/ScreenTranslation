@@ -32,8 +32,9 @@ class NotificationUtilImpl(
 
     private fun createPIntent(): PendingIntent {
         val intent = Intent(context, TranslatorActivity::class.java)
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         return PendingIntent.getActivity(
-            context,
+            context.applicationContext,
             INTENT_REQUEST_CODE,
             intent,
             PendingIntent.FLAG_IMMUTABLE

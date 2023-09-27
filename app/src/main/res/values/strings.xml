@@ -12,4 +12,6 @@
 
     <string name="notification_title">Screen Translation</string>
     <string name="notification_text">Click here</string>
+
+    <string name="projection_denied">MediaProjection permission denied</string>
 </resources>
