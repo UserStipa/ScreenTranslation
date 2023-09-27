@@ -1,4 +1,4 @@
-package com.userstipa.screentranslation.uitls.screenshot_util
+package com.userstipa.screentranslation.ui.uitls.screenshot_util
 
 import android.graphics.Bitmap
 import android.graphics.PixelFormat
@@ -8,7 +8,7 @@ import android.media.projection.MediaProjection
 import android.os.Handler
 import android.os.HandlerThread
 import android.os.Process
-import com.userstipa.screentranslation.uitls.virtualdisplay_util.VirtualDisplayUtil
+import com.userstipa.screentranslation.ui.uitls.virtualdisplay_util.VirtualDisplayUtil
 import java.nio.ByteBuffer
 import javax.inject.Inject
 import kotlin.coroutines.resume

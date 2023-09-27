@@ -1,4 +1,4 @@
-package com.userstipa.screentranslation.uitls.screenshot_util
+package com.userstipa.screentranslation.ui.uitls.screenshot_util
 
 import android.graphics.Bitmap
 import android.media.projection.MediaProjection

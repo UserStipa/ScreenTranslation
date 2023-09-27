@@ -68,6 +68,6 @@ class TranslatorActivity : AppCompatActivity(), ServiceConnection {
     }
 
     private fun translateDisplay() {
-        if (isServiceConnected) service.createScreenshot()
+        if (isServiceConnected) service.translateScreen()
     }
 }

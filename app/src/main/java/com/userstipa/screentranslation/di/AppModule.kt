@@ -1,12 +1,16 @@
 package com.userstipa.screentranslation.di
 
 import android.content.Context
-import com.userstipa.screentranslation.uitls.notification_util.NotificationUtil
-import com.userstipa.screentranslation.uitls.notification_util.NotificationUtilImpl
-import com.userstipa.screentranslation.uitls.screenshot_util.ScreenshotUtil
-import com.userstipa.screentranslation.uitls.screenshot_util.ScreenshotUtilImpl
-import com.userstipa.screentranslation.uitls.virtualdisplay_util.VirtualDisplayUtil
-import com.userstipa.screentranslation.uitls.virtualdisplay_util.VirtualDisplayUtilImpl
+import com.userstipa.screentranslation.domain.text_scanner.TextScanner
+import com.userstipa.screentranslation.domain.text_scanner.TextScannerImpl
+import com.userstipa.screentranslation.domain.text_translate.TextTranslation
+import com.userstipa.screentranslation.domain.text_translate.TextTranslationImpl
+import com.userstipa.screentranslation.ui.uitls.notification_util.NotificationUtil
+import com.userstipa.screentranslation.ui.uitls.notification_util.NotificationUtilImpl
+import com.userstipa.screentranslation.ui.uitls.screenshot_util.ScreenshotUtil
+import com.userstipa.screentranslation.ui.uitls.screenshot_util.ScreenshotUtilImpl
+import com.userstipa.screentranslation.ui.uitls.virtualdisplay_util.VirtualDisplayUtil
+import com.userstipa.screentranslation.ui.uitls.virtualdisplay_util.VirtualDisplayUtilImpl
 import dagger.Module
 import dagger.Provides
 import javax.inject.Singleton
@@ -30,5 +34,17 @@ class AppModule {
     @Singleton
     fun provideNotificationUtil(context: Context): NotificationUtil {
         return NotificationUtilImpl(context)
+    }
+
+    @Provides
+    @Singleton
+    fun provideTranslator(): TextTranslation {
+        return TextTranslationImpl()
+    }
+
+    @Provides
+    @Singleton
+    fun provideTextScanner(): TextScanner {
+        return TextScannerImpl()
     }
 }

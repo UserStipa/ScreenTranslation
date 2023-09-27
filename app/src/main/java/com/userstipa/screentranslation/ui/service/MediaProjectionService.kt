@@ -4,7 +4,7 @@ import android.content.Intent
 
 interface MediaProjectionService {
 
-    fun createScreenshot()
+    fun translateScreen()
 
     fun grandPermission(intent: Intent)
 

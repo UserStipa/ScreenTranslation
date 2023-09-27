@@ -1,4 +1,4 @@
-package com.userstipa.screentranslation.uitls.notification_util
+package com.userstipa.screentranslation.ui.uitls.notification_util
 
 import android.app.Notification
 import android.app.NotificationChannel

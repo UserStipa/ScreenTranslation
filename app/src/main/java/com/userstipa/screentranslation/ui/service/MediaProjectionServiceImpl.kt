@@ -4,19 +4,19 @@ import android.app.Activity
 import android.app.Service
 import android.content.Context
 import android.content.Intent
-import android.graphics.Bitmap
 import android.media.projection.MediaProjection
 import android.media.projection.MediaProjectionManager
 import android.os.Binder
 import android.os.IBinder
 import com.userstipa.screentranslation.App
-import com.userstipa.screentranslation.uitls.notification_util.NotificationUtil
-import com.userstipa.screentranslation.uitls.screenshot_util.ScreenshotUtil
+import com.userstipa.screentranslation.domain.text_scanner.TextScanner
+import com.userstipa.screentranslation.domain.text_translate.TextTranslation
+import com.userstipa.screentranslation.ui.uitls.notification_util.NotificationUtil
+import com.userstipa.screentranslation.ui.uitls.screenshot_util.ScreenshotUtil
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
-import java.io.IOException
 import javax.inject.Inject
 
 class MediaProjectionServiceImpl : Service(), MediaProjectionService {
@@ -27,10 +27,15 @@ class MediaProjectionServiceImpl : Service(), MediaProjectionService {
     @Inject
     lateinit var screenshotUtil: ScreenshotUtil
 
+    @Inject
+    lateinit var textScanner: TextScanner
+
+    @Inject
+    lateinit var textTranslator: TextTranslation
+
     private val binder = LocalBinder()
     private val job = SupervisorJob()
-    private val scope = CoroutineScope(Dispatchers.IO + job)
-
+    private val serviceScope = CoroutineScope(Dispatchers.Default + job)
     private var mediaProjection: MediaProjection? = null
 
     override fun onCreate() {
@@ -47,12 +52,12 @@ class MediaProjectionServiceImpl : Service(), MediaProjectionService {
         return binder
     }
 
-    override fun createScreenshot() {
-        scope.launch {
-            val bitmap = screenshotUtil.createScreenshot(
-                mediaProjection ?: throw Exception("Service need media projection")
-            )
-            saveImage(bitmap)
+    override fun translateScreen() {
+        if (mediaProjection == null) return
+        serviceScope.launch {
+            val image = screenshotUtil.createScreenshot(mediaProjection!!)
+            val text = textScanner.getText(image)
+            val translatedText = textTranslator.translate(text, "auto", "ru")
         }
     }
 
@@ -69,18 +74,4 @@ class MediaProjectionServiceImpl : Service(), MediaProjectionService {
     inner class LocalBinder : Binder() {
         fun getService(): MediaProjectionServiceImpl = this@MediaProjectionServiceImpl
     }
-
-    private fun saveImage(bitmap: Bitmap) {
-        try {
-            openFileOutput("screenshot.jpeg", MODE_PRIVATE).use {
-                if (!bitmap.compress(Bitmap.CompressFormat.JPEG, 95, it)) {
-                    throw IOException("Couldn't save bitmap")
-                }
-            }
-        } catch (e: IOException) {
-            e.printStackTrace()
-        }
-    }
-
-
 }
