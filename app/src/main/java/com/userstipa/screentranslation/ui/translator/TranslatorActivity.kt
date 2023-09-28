@@ -10,16 +10,19 @@ import android.os.Bundle
 import android.os.IBinder
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.os.bundleOf
 import androidx.core.view.WindowCompat
 import com.google.android.material.snackbar.Snackbar
 import com.userstipa.screentranslation.R
 import com.userstipa.screentranslation.databinding.ActivityTranslatorBinding
+import com.userstipa.screentranslation.ui.service.MediaProjectionService
 import com.userstipa.screentranslation.ui.service.MediaProjectionServiceImpl
+import com.userstipa.screentranslation.ui.translator.ModalBottomSheet.Companion.OUTPUT_TEXT
 
-class TranslatorActivity : AppCompatActivity(), ServiceConnection {
+class TranslatorActivity : AppCompatActivity(), ServiceConnection, ModalBottomSheetActions {
 
     private lateinit var binding: ActivityTranslatorBinding
-    private lateinit var service: MediaProjectionServiceImpl
+    private lateinit var service: MediaProjectionService
     private var isServiceConnected = false
 
     private val requestProjection =
@@ -27,9 +30,7 @@ class TranslatorActivity : AppCompatActivity(), ServiceConnection {
             val intent = result.data
             if (result.resultCode != Activity.RESULT_OK) {
                 Snackbar.make(
-                    binding.root,
-                    getString(R.string.projection_denied),
-                    Snackbar.LENGTH_SHORT
+                    binding.root, getString(R.string.projection_denied), Snackbar.LENGTH_SHORT
                 ).show()
             }
             if (result.resultCode == Activity.RESULT_OK && intent != null) {
@@ -68,6 +69,15 @@ class TranslatorActivity : AppCompatActivity(), ServiceConnection {
     }
 
     private fun translateDisplay() {
-        if (isServiceConnected) service.translateScreen()
+        if (isServiceConnected) service.translateScreen {
+            ModalBottomSheet().apply {
+                arguments = bundleOf(OUTPUT_TEXT to it)
+                show(supportFragmentManager, ModalBottomSheet.TAG)
+            }
+        }
+    }
+
+    override fun onCloseModalBottomSheet() {
+        finish()
     }
 }

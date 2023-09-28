@@ -10,6 +10,8 @@ import android.os.Binder
 import android.os.Handler
 import android.os.HandlerThread
 import android.os.IBinder
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import com.userstipa.screentranslation.App
 import com.userstipa.screentranslation.domain.text_scanner.TextScanner
 import com.userstipa.screentranslation.domain.text_translate.TextTranslation
@@ -37,12 +39,15 @@ class MediaProjectionServiceImpl : Service(), MediaProjectionService {
 
     private val binder = LocalBinder()
     private var mediaProjection: MediaProjection? = null
-
     private val job = SupervisorJob()
-    private var serviceCoroutineScope: CoroutineScope
+    private val handlerThread = HandlerThread("ServiceThread")
+    private val serviceCoroutineScope: CoroutineScope
+
+    private val _result = MutableLiveData<String>()
+    override val result: LiveData<String> get() = _result
 
     init {
-        val handlerThread = HandlerThread("ServiceThread").also { it.start() }
+        handlerThread.start()
         val handler = Handler(handlerThread.looper)
         val dispatcher = handler.asCoroutineDispatcher("ServiceDispatcher")
         serviceCoroutineScope = CoroutineScope(dispatcher + job)
@@ -62,13 +67,14 @@ class MediaProjectionServiceImpl : Service(), MediaProjectionService {
         return binder
     }
 
-    override fun translateScreen() {
+    override fun translateScreen(result: (text: String) -> Unit) {
         if (mediaProjection == null) return
 
         serviceCoroutineScope.launch {
             val image = screenshotUtil.createScreenshot(mediaProjection!!)
             val text = textScanner.getText(image)
             val translatedText = textTranslator.translate(text, "auto", "ru")
+            result.invoke(translatedText)
         }
     }
 
@@ -79,6 +85,7 @@ class MediaProjectionServiceImpl : Service(), MediaProjectionService {
 
     override fun onDestroy() {
         super.onDestroy()
+        handlerThread.quit()
         job.cancel()
     }
 
