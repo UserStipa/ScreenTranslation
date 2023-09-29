@@ -8,7 +8,8 @@
     <string name="previous">Previous</string>
 
     <string name="content_description_icon">ScreenTranslation icon</string>
-    <string name="btn_launch_service">Start service</string>
+    <string name="btn_launch_service_is_enable">Stop service</string>
+    <string name="btn_launch_service_is_disable">Start service</string>
 
     <string name="notification_title">Screen Translation</string>
     <string name="notification_text">Click here</string>
