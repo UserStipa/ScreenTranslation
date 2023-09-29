@@ -10,6 +10,7 @@ import android.os.Binder
 import android.os.Handler
 import android.os.HandlerThread
 import android.os.IBinder
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.userstipa.screentranslation.App
@@ -56,15 +57,15 @@ class MediaProjectionServiceImpl : Service(), MediaProjectionService {
     override fun onCreate() {
         super.onCreate()
         (applicationContext as App).appComponent.inject(this)
-    }
-
-    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         startForeground(notificationUtil.getId(), notificationUtil.create())
-        return START_STICKY
     }
 
     override fun onBind(intent: Intent): IBinder {
         return binder
+    }
+
+    override fun onUnbind(intent: Intent?): Boolean {
+        return true
     }
 
     override fun translateScreen(result: (text: String) -> Unit) {
