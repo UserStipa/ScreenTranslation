@@ -3,13 +3,25 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/FirstFragment">
+    app:startDestination="@id/HomeFragment">
 
     <fragment
-        android:id="@+id/FirstFragment"
+        android:id="@+id/HomeFragment"
         android:name="com.userstipa.screentranslation.ui.home.HomeFragment"
         android:label="@string/first_fragment_label"
-        tools:layout="@layout/fragment_first">
+        tools:layout="@layout/fragment_home">
+        <action
+            android:id="@+id/action_HomeFragment_to_SelectLanguageFragment"
+            app:destination="@id/SelectLanguageFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/SelectLanguageFragment"
+        android:name="com.userstipa.screentranslation.ui.select_language.SelectLanguageFragment"
+        android:label="fragment_select_language"
+        tools:layout="@layout/fragment_select_language" >
+        <argument
+            android:name="languageType"
+            app:argType="com.userstipa.screentranslation.models.LanguageType" />
     </fragment>
 
 </navigation>

@@ -1,4 +1,4 @@
-package com.userstipa.screentranslation.ui.home
+package com.userstipa.screentranslation.ui
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity

@@ -22,7 +22,7 @@
             android:foregroundServiceType="mediaProjection" />
 
         <activity
-            android:name=".ui.home.MainActivity"
+            android:name=".ui.MainActivity"
             android:exported="true"
             android:theme="@style/AppTheme">
             <intent-filter>

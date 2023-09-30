@@ -9,20 +9,22 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import com.userstipa.screentranslation.R
-import com.userstipa.screentranslation.databinding.FragmentFirstBinding
+import com.userstipa.screentranslation.databinding.FragmentHomeBinding
+import com.userstipa.screentranslation.models.LanguageType
 import com.userstipa.screentranslation.ui.service.MediaProjectionServiceImpl
 
 class HomeFragment : Fragment(), ServiceConnection {
 
-    private var _binding: FragmentFirstBinding? = null
+    private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
     private var isServiceConnected = false
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentFirstBinding.inflate(inflater, container, false)
+        _binding = FragmentHomeBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -36,6 +38,17 @@ class HomeFragment : Fragment(), ServiceConnection {
                 startService()
                 connectService()
             }
+        }
+        binding.sourceLanguage.setOnClickListener {
+            val actions =
+                HomeFragmentDirections.actionHomeFragmentToSelectLanguageFragment(LanguageType.SOURCE)
+            findNavController().navigate(actions)
+        }
+
+        binding.targetLanguage.setOnClickListener {
+            val actions =
+                HomeFragmentDirections.actionHomeFragmentToSelectLanguageFragment(LanguageType.TARGET)
+            findNavController().navigate(actions)
         }
     }
 
@@ -78,14 +91,16 @@ class HomeFragment : Fragment(), ServiceConnection {
 
     override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
         isServiceConnected = true
-        binding.launchService.text = getString(R.string.btn_launch_service_is_enable)
+        binding.icon.setImageResource(R.drawable.baseline_translate_enable_24)
         binding.launchService.isClickable = true
+        binding.launchService.text = getString(R.string.btn_launch_service_is_enable)
     }
 
     override fun onServiceDisconnected(name: ComponentName?) {
         isServiceConnected = false
+        binding.icon.setImageResource(R.drawable.baseline_translate_disable_24)
+        binding.icon.isClickable = true
         binding.launchService.text = getString(R.string.btn_launch_service_is_disable)
-        binding.launchService.isClickable = true
     }
 
 }

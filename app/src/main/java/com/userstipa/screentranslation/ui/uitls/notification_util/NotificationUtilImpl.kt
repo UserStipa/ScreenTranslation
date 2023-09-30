@@ -22,7 +22,7 @@ class NotificationUtilImpl(
             .setContentTitle(context.getString(R.string.notification_title))
             .setContentText(context.getString(R.string.notification_text))
             .setContentIntent(createPIntent())
-            .setSmallIcon(R.drawable.baseline_translate_24)
+            .setSmallIcon(R.drawable.baseline_translate_disable_24)
             .build()
     }
 
