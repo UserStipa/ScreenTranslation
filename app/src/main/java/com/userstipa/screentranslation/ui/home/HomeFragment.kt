@@ -127,7 +127,7 @@ class HomeFragment : Fragment(), ServiceConnection {
     override fun onServiceDisconnected(name: ComponentName?) {
         isServiceConnected = false
         binding.icon.setImageResource(R.drawable.baseline_translate_disable_24)
-        binding.icon.isClickable = true
+        binding.launchService.isClickable = true
         binding.launchService.text = getString(R.string.btn_launch_service_is_disable)
     }
 

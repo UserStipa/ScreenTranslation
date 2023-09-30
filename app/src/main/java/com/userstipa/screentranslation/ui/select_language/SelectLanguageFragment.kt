@@ -21,6 +21,7 @@ class SelectLanguageFragment : Fragment(), ListActions {
     private val binding get() = _binding!!
     private val args by navArgs<SelectLanguageFragmentArgs>()
     private val languageType by lazy { args.languageType }
+    private lateinit var adapter: SelectLanguageAdapter
 
     @Inject
     lateinit var viewModelFactory: ViewModelFactory
@@ -42,15 +43,24 @@ class SelectLanguageFragment : Fragment(), ListActions {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        viewModel.fetchData(languageType)
         setAdapter()
+        setObservers()
     }
 
     private fun setAdapter() {
+        adapter = SelectLanguageAdapter(languageType, Language.English, this)
         binding.list.layoutManager = LinearLayoutManager(requireContext())
-        binding.list.adapter = SelectLanguageAdapter(languageType, Language.English, this)
+        binding.list.adapter = adapter
+    }
+
+    private fun setObservers() {
+        viewModel.selectedLanguage.observe(viewLifecycleOwner) {
+            adapter.setChecked(it)
+        }
     }
 
     override fun onClickLanguage(language: Language) {
-
+        viewModel.setLanguage(languageType, language)
     }
 }

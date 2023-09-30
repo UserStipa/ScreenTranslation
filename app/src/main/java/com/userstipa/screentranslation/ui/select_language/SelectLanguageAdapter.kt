@@ -19,6 +19,13 @@ class SelectLanguageAdapter(
 
     private var previousLanguageIndex = list.indexOf(selectedLanguage)
 
+    fun setChecked(language: Language) {
+        val index = list.indexOf(language)
+        selectedLanguage = language
+        previousLanguageIndex = index
+        notifyItemChanged(index)
+    }
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): Holder {
         return Holder(
             ItemListSelectLanguageBinding.inflate(
