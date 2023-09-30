@@ -1,7 +1,8 @@
 package com.userstipa.screentranslation.di
 
 import android.content.Context
-import androidx.fragment.app.Fragment
+import com.userstipa.screentranslation.ui.home.HomeFragment
+import com.userstipa.screentranslation.ui.select_language.SelectLanguageFragment
 import com.userstipa.screentranslation.ui.service.MediaProjectionServiceImpl
 import dagger.BindsInstance
 import dagger.Component
@@ -18,6 +19,8 @@ interface AppComponent {
 
     fun inject(service: MediaProjectionServiceImpl)
 
-    fun inject(fragment: Fragment)
+    fun inject(fragment: HomeFragment)
+
+    fun inject(fragment: SelectLanguageFragment)
 
 }

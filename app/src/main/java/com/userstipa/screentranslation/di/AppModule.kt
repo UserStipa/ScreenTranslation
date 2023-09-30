@@ -2,6 +2,8 @@ package com.userstipa.screentranslation.di
 
 import android.content.Context
 import androidx.lifecycle.ViewModelProvider
+import com.userstipa.screentranslation.data.DataStorePreferences
+import com.userstipa.screentranslation.data.DataStorePreferencesImpl
 import com.userstipa.screentranslation.domain.text_scanner.TextScanner
 import com.userstipa.screentranslation.domain.text_scanner.TextScannerImpl
 import com.userstipa.screentranslation.domain.text_translate.TextTranslation
@@ -51,6 +53,11 @@ class AppModule {
 
     @Provides
     @Singleton
+    fun provideDataStorePreferences(context: Context): DataStorePreferences {
+        return DataStorePreferencesImpl(context)
+    }
+
+    @Provides
     fun provideViewModelFactory(factory: ViewModelFactory): ViewModelProvider.Factory {
         return factory
     }

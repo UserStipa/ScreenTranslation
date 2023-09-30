@@ -44,6 +44,20 @@ class HomeFragment : Fragment(), ServiceConnection {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        setObservers()
+        setUi()
+    }
+
+    private fun setObservers() {
+        viewModel.targetLanguage.observe(viewLifecycleOwner) {
+            binding.targetLanguage.text = it.title
+        }
+        viewModel.sourceLanguage.observe(viewLifecycleOwner) {
+            binding.sourceLanguage.text = it.title
+        }
+    }
+
+    private fun setUi() {
         binding.launchService.setOnClickListener {
             binding.launchService.isClickable = false
             if (isServiceConnected) {
@@ -66,7 +80,6 @@ class HomeFragment : Fragment(), ServiceConnection {
         }
     }
 
-
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
@@ -86,6 +99,7 @@ class HomeFragment : Fragment(), ServiceConnection {
 
     override fun onResume() {
         super.onResume()
+        viewModel.fetchData()
         connectService()
     }
 
