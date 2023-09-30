@@ -1,6 +1,7 @@
 package com.userstipa.screentranslation.di
 
 import android.content.Context
+import androidx.lifecycle.ViewModelProvider
 import com.userstipa.screentranslation.domain.text_scanner.TextScanner
 import com.userstipa.screentranslation.domain.text_scanner.TextScannerImpl
 import com.userstipa.screentranslation.domain.text_translate.TextTranslation
@@ -46,5 +47,11 @@ class AppModule {
     @Singleton
     fun provideTextScanner(): TextScanner {
         return TextScannerImpl()
+    }
+
+    @Provides
+    @Singleton
+    fun provideViewModelFactory(factory: ViewModelFactory): ViewModelProvider.Factory {
+        return factory
     }
 }
