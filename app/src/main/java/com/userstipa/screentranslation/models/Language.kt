@@ -8,6 +8,5 @@ enum class Language(val title: String, val code: String) {
     Korean("Korean", "ko"),
     Portuguese("Portuguese", "pt"),
     Russian("Russian", "ru"),
-    Spanish("Spanish", "es"),
-    Auto("Auto", "auto");
+    Spanish("Spanish", "es")
 }

@@ -39,13 +39,16 @@ android {
 
 dependencies {
     def dagger_version = "2.48"
-    def mk_kit_version = "16.0.0"
+    def ml_kit_recognition_version = "16.0.0"
+    def ml_kit_translate_version = "17.0.1"
     def datastore_version = "1.0.0"
 
     implementation "com.google.dagger:dagger:$dagger_version"
     kapt "com.google.dagger:dagger-compiler:$dagger_version"
 
-    implementation "com.google.mlkit:text-recognition:$mk_kit_version"
+    implementation "com.google.mlkit:text-recognition:$ml_kit_recognition_version"
+
+    implementation "com.google.mlkit:translate:$ml_kit_translate_version"
 
     implementation "androidx.datastore:datastore-preferences:$datastore_version"
 

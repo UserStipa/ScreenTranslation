@@ -9,8 +9,10 @@ import android.os.IBinder
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.userstipa.screentranslation.App
 import com.userstipa.screentranslation.R
@@ -18,6 +20,7 @@ import com.userstipa.screentranslation.databinding.FragmentHomeBinding
 import com.userstipa.screentranslation.di.ViewModelFactory
 import com.userstipa.screentranslation.models.LanguageType
 import com.userstipa.screentranslation.ui.service.MediaProjectionServiceImpl
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class HomeFragment : Fragment(), ServiceConnection {
@@ -49,11 +52,27 @@ class HomeFragment : Fragment(), ServiceConnection {
     }
 
     private fun setObservers() {
+
+        viewModel.sourceLanguage.observe(viewLifecycleOwner) {
+            binding.sourceLanguage.text = it.title
+        }
+
         viewModel.targetLanguage.observe(viewLifecycleOwner) {
             binding.targetLanguage.text = it.title
         }
-        viewModel.sourceLanguage.observe(viewLifecycleOwner) {
-            binding.sourceLanguage.text = it.title
+
+        lifecycleScope.launch {
+            viewModel.eventFlow.collect { event ->
+                when (event) {
+                    is Event.ErrorEvent -> {}
+                    is Event.TranslatorIsLoading -> binding.progressBar.isVisible = true
+                    is Event.TranslatorIsLoadingComplete -> binding.progressBar.isVisible = false
+                    is Event.TranslatorIsReady -> {
+                        startService()
+                        connectService()
+                    }
+                }
+            }
         }
     }
 
@@ -63,8 +82,7 @@ class HomeFragment : Fragment(), ServiceConnection {
             if (isServiceConnected) {
                 stopService()
             } else {
-                startService()
-                connectService()
+                viewModel.prepareTranslate()
             }
         }
         binding.sourceLanguage.setOnClickListener {

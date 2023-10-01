@@ -49,7 +49,7 @@ class SelectLanguageFragment : Fragment(), ListActions {
     }
 
     private fun setAdapter() {
-        adapter = SelectLanguageAdapter(languageType, Language.English, this)
+        adapter = SelectLanguageAdapter(Language.English, this)
         binding.list.layoutManager = LinearLayoutManager(requireContext())
         binding.list.adapter = adapter
     }

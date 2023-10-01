@@ -6,4 +6,8 @@ interface TextScanner {
 
     suspend fun getText(bitmap: Bitmap): String
 
+    fun create()
+
+    fun close()
+
 }

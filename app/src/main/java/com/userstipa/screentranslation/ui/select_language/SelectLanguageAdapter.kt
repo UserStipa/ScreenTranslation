@@ -8,14 +8,11 @@ import com.userstipa.screentranslation.models.Language
 import com.userstipa.screentranslation.models.LanguageType
 
 class SelectLanguageAdapter(
-    languageType: LanguageType,
     private var selectedLanguage: Language,
     private val listener: ListActions
 ) : RecyclerView.Adapter<SelectLanguageAdapter.Holder>() {
 
-    private val list: List<Language> = if (languageType == LanguageType.TARGET) {
-        Language.entries.dropLast(1)
-    } else Language.entries
+    private val list: List<Language> = Language.entries
 
     private var previousLanguageIndex = list.indexOf(selectedLanguage)
 

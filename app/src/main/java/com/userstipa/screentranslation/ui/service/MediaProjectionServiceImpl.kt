@@ -10,7 +10,6 @@ import android.os.Binder
 import android.os.Handler
 import android.os.HandlerThread
 import android.os.IBinder
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.userstipa.screentranslation.App
@@ -57,6 +56,7 @@ class MediaProjectionServiceImpl : Service(), MediaProjectionService {
     override fun onCreate() {
         super.onCreate()
         (applicationContext as App).appComponent.inject(this)
+        textScanner.create()
         startForeground(notificationUtil.getId(), notificationUtil.create())
     }
 
@@ -74,7 +74,7 @@ class MediaProjectionServiceImpl : Service(), MediaProjectionService {
         serviceCoroutineScope.launch {
             val image = screenshotUtil.createScreenshot(mediaProjection!!)
             val text = textScanner.getText(image)
-            val translatedText = textTranslator.translate(text, "auto", "ru")
+            val translatedText = textTranslator.translate(text)
             result.invoke(translatedText)
         }
     }
@@ -86,6 +86,7 @@ class MediaProjectionServiceImpl : Service(), MediaProjectionService {
 
     override fun onDestroy() {
         super.onDestroy()
+        textScanner.close()
         handlerThread.quit()
         job.cancel()
     }
