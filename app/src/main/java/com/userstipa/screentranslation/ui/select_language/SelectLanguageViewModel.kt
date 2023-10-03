@@ -1,12 +1,12 @@
 package com.userstipa.screentranslation.ui.select_language
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.userstipa.screentranslation.data.DataStorePreferences
 import com.userstipa.screentranslation.data.PreferencesKeys
 import com.userstipa.screentranslation.models.Language
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -14,15 +14,17 @@ class SelectLanguageViewModel @Inject constructor(
     private val dataStorePreferences: DataStorePreferences
 ) : ViewModel() {
 
-    private val _selectedLanguage = MutableLiveData<Language>()
-    val selectedLanguage: LiveData<Language> get() = _selectedLanguage
+    private val _uiState = MutableStateFlow(SelectLanguageUiState())
+    val uiState: StateFlow<SelectLanguageUiState> = _uiState
 
-    private val _isLanguageDownload = MutableLiveData<Boolean>()
-    val isLanguageDownload: LiveData<Boolean> get() = _isLanguageDownload
-
-    fun getCurrentLanguage(preferencesKeys: PreferencesKeys) {
+    fun fetchData(preferencesKeys: PreferencesKeys) {
         viewModelScope.launch {
-            _selectedLanguage.value = dataStorePreferences.getLanguage(preferencesKeys)
+            val isLanguagesDownloadEnable = dataStorePreferences.getBoolean(PreferencesKeys.IS_LANGUAGES_DOWNLOAD)
+            val selectedLanguage = dataStorePreferences.getLanguage(preferencesKeys)
+            _uiState.emit(SelectLanguageUiState(
+                isDownloadLanguagesEnable = isLanguagesDownloadEnable,
+                selectedLanguage = selectedLanguage
+            ))
         }
     }
 

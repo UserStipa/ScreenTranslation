@@ -7,12 +7,16 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.userstipa.screentranslation.App
 import com.userstipa.screentranslation.databinding.FragmentSelectLanguageBinding
 import com.userstipa.screentranslation.di.ViewModelFactory
 import com.userstipa.screentranslation.models.Language
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class SelectLanguageFragment : Fragment(), ListActions {
@@ -43,7 +47,7 @@ class SelectLanguageFragment : Fragment(), ListActions {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel.getCurrentLanguage(preferencesLanguageKey)
+        viewModel.fetchData(preferencesLanguageKey)
         setAdapter()
         setObservers()
         setUi()
@@ -56,11 +60,14 @@ class SelectLanguageFragment : Fragment(), ListActions {
     }
 
     private fun setObservers() {
-        viewModel.selectedLanguage.observe(viewLifecycleOwner) {
-            adapter.setChecked(it)
-        }
-        viewModel.isLanguageDownload.observe(viewLifecycleOwner) {
-            binding.switchDownload.isChecked = it
+        viewLifecycleOwner.lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.fetchData(preferencesLanguageKey)
+                viewModel.uiState.collect {
+                    binding.switchDownload.isChecked = it.isDownloadLanguagesEnable
+                    adapter.setChecked(it.selectedLanguage)
+                }
+            }
         }
     }
 
