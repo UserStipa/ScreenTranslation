@@ -45,6 +45,22 @@ class DataStorePreferencesImpl @Inject constructor(
         }
     }
 
+    override suspend fun setPreferences(
+        preferencesKeys: PreferencesKeys,
+        boolean: Boolean
+    ) {
+        val preferenceKey = booleanPreferencesKey(preferencesKeys.name)
+        context.dataStore.edit { preferences ->
+            preferences[preferenceKey] = boolean
+        }
+    }
+
+    override suspend fun getPreferences(preferencesKeys: PreferencesKeys): Boolean {
+        val preferencesKey = booleanPreferencesKey(preferencesKeys.name)
+        val preferences = context.dataStore.data.first()
+        return preferences[preferencesKey] ?: false
+    }
+
     companion object {
         const val PREFERENCES_NAME = "PREFERENCES_NAME"
     }

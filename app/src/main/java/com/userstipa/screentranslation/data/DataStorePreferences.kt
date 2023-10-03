@@ -13,5 +13,9 @@ interface DataStorePreferences {
 
     suspend fun addDownloadedLanguage(language: Language)
 
+    suspend fun setPreferences(preferencesKeys: PreferencesKeys, boolean: Boolean)
+
+    suspend fun getPreferences(preferencesKeys: PreferencesKeys): Boolean
+
 
 }

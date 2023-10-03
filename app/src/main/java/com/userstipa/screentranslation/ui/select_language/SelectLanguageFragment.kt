@@ -46,6 +46,7 @@ class SelectLanguageFragment : Fragment(), ListActions {
         viewModel.fetchData(languageType)
         setAdapter()
         setObservers()
+        setUi()
     }
 
     private fun setAdapter() {
@@ -57,6 +58,15 @@ class SelectLanguageFragment : Fragment(), ListActions {
     private fun setObservers() {
         viewModel.selectedLanguage.observe(viewLifecycleOwner) {
             adapter.setChecked(it)
+        }
+        viewModel.isLanguageDownload.observe(viewLifecycleOwner) {
+            binding.switchDownload.isChecked = it
+        }
+    }
+
+    private fun setUi() {
+        binding.switchDownload.setOnCheckedChangeListener { _, isChecked ->
+            viewModel.isLanguagesDownload(isChecked)
         }
     }
 
