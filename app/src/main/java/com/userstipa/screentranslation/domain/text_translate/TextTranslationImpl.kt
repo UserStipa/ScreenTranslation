@@ -6,7 +6,6 @@ import com.google.mlkit.nl.translate.Translator
 import com.google.mlkit.nl.translate.TranslatorOptions
 import com.userstipa.screentranslation.models.Language
 import kotlin.coroutines.resume
-import kotlin.coroutines.resumeWithException
 import kotlin.coroutines.suspendCoroutine
 
 class TextTranslationImpl : TextTranslation {
@@ -59,7 +58,7 @@ class TextTranslationImpl : TextTranslation {
                     continuation.resume(it)
                 }
                 .addOnFailureListener {
-                    continuation.resumeWithException(it)
+                    continuation.resume("Something went wrong... Error: ${it.message ?: "Message is empty"}")
                 }
         }
     }

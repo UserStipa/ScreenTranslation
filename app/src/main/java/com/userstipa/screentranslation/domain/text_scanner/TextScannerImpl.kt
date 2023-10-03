@@ -5,7 +5,6 @@ import com.google.mlkit.vision.text.TextRecognition
 import com.google.mlkit.vision.text.TextRecognizer
 import com.google.mlkit.vision.text.latin.TextRecognizerOptions
 import kotlin.coroutines.resume
-import kotlin.coroutines.resumeWithException
 import kotlin.coroutines.suspendCoroutine
 
 class TextScannerImpl : TextScanner {
@@ -20,7 +19,7 @@ class TextScannerImpl : TextScanner {
         return suspendCoroutine { continuation ->
             recognizer!!.process(bitmap, ROTATION_DEGREES)
                 .addOnFailureListener {
-                    continuation.resumeWithException(it)
+                    continuation.resume("Something went wrong... Error: ${it.message ?: "Message is empty"}")
                 }
                 .addOnSuccessListener {
                     continuation.resume(it.text)
