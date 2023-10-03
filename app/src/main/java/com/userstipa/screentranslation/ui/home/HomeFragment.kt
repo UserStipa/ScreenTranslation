@@ -12,14 +12,17 @@ import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.userstipa.screentranslation.App
 import com.userstipa.screentranslation.R
+import com.userstipa.screentranslation.data.PreferencesKeys
 import com.userstipa.screentranslation.databinding.FragmentHomeBinding
 import com.userstipa.screentranslation.di.ViewModelFactory
-import com.userstipa.screentranslation.models.LanguageType
 import com.userstipa.screentranslation.ui.service.MediaProjectionServiceImpl
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -52,48 +55,39 @@ class HomeFragment : Fragment(), ServiceConnection {
     }
 
     private fun setObservers() {
-
-        viewModel.sourceLanguage.observe(viewLifecycleOwner) {
-            binding.sourceLanguage.text = it.title
-        }
-
-        viewModel.targetLanguage.observe(viewLifecycleOwner) {
-            binding.targetLanguage.text = it.title
-        }
-
-        lifecycleScope.launch {
-            viewModel.eventFlow.collect { event ->
-                when (event) {
-                    is Event.ErrorEvent -> {}
-                    is Event.TranslatorIsLoading -> binding.progressBar.isVisible = true
-                    is Event.TranslatorIsLoadingComplete -> binding.progressBar.isVisible = false
-                    is Event.TranslatorIsReady -> {
-                        startService()
-                        connectService()
-                    }
+        viewLifecycleOwner.lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.fetchCurrentLanguages()
+                viewModel.uiState.collectLatest {
+                    binding.sourceLanguage.text = it.sourceLanguage.title
+                    binding.targetLanguage.text = it.targetLanguage.title
+                    binding.progressBar.isVisible = it.isLoading
+                    binding.launchService.isEnabled = !it.isLoading
                 }
+            }
+        }
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.isTranslatorReady.collectLatest {
+                startAndConnectToService()
             }
         }
     }
 
     private fun setUi() {
         binding.launchService.setOnClickListener {
-            binding.launchService.isClickable = false
-            if (isServiceConnected) {
-                stopService()
-            } else {
-                viewModel.prepareTranslate()
-            }
+            if (isServiceConnected) stopService()
+            else viewModel.prepareTranslateService()
         }
+
         binding.sourceLanguage.setOnClickListener {
             val actions =
-                HomeFragmentDirections.actionHomeFragmentToSelectLanguageFragment(LanguageType.SOURCE)
+                HomeFragmentDirections.actionHomeFragmentToSelectLanguageFragment(PreferencesKeys.SOURCE_LANGUAGE)
             findNavController().navigate(actions)
         }
 
         binding.targetLanguage.setOnClickListener {
             val actions =
-                HomeFragmentDirections.actionHomeFragmentToSelectLanguageFragment(LanguageType.TARGET)
+                HomeFragmentDirections.actionHomeFragmentToSelectLanguageFragment(PreferencesKeys.TARGET_LANGUAGE)
             findNavController().navigate(actions)
         }
     }
@@ -103,9 +97,10 @@ class HomeFragment : Fragment(), ServiceConnection {
         _binding = null
     }
 
-    private fun startService() {
+    private fun startAndConnectToService() {
         Intent(requireContext(), MediaProjectionServiceImpl::class.java).also {
             requireContext().startForegroundService(it)
+            connectService()
         }
     }
 
@@ -117,7 +112,6 @@ class HomeFragment : Fragment(), ServiceConnection {
 
     override fun onResume() {
         super.onResume()
-        viewModel.fetchData()
         connectService()
     }
 

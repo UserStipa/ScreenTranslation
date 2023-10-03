@@ -5,7 +5,6 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.userstipa.screentranslation.databinding.ItemListSelectLanguageBinding
 import com.userstipa.screentranslation.models.Language
-import com.userstipa.screentranslation.models.LanguageType
 
 class SelectLanguageAdapter(
     private var selectedLanguage: Language,

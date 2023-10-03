@@ -9,7 +9,6 @@ import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import com.userstipa.screentranslation.data.DataStorePreferencesImpl.Companion.PREFERENCES_NAME
 import com.userstipa.screentranslation.models.Language
-import com.userstipa.screentranslation.models.LanguageType
 import kotlinx.coroutines.flow.first
 import javax.inject.Inject
 
@@ -18,32 +17,6 @@ private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(na
 class DataStorePreferencesImpl @Inject constructor(
     private val context: Context
 ) : DataStorePreferences {
-
-    override suspend fun putLanguage(languageType: LanguageType, language: Language) {
-        val preferencesKey = stringPreferencesKey(languageType.name)
-        context.dataStore.edit { preferences ->
-            preferences[preferencesKey] = language.code
-        }
-    }
-
-    override suspend fun getLanguage(languageType: LanguageType): Language? {
-        val preferencesKey = stringPreferencesKey(languageType.name)
-        val preferences = context.dataStore.data.first()
-        return Language.entries.firstOrNull { it.code == preferences[preferencesKey] }
-    }
-
-    override suspend fun isLanguageDownloaded(language: Language): Boolean {
-        val preferencesKey = booleanPreferencesKey(language.code)
-        val preferences = context.dataStore.data.first()
-        return preferences[preferencesKey] ?: false
-    }
-
-    override suspend fun addDownloadedLanguage(language: Language) {
-        val preferencesKey = booleanPreferencesKey(language.code)
-        context.dataStore.edit { preferences ->
-            preferences[preferencesKey] = true
-        }
-    }
 
     override suspend fun setPreferences(
         preferencesKeys: PreferencesKeys,
@@ -55,13 +28,33 @@ class DataStorePreferencesImpl @Inject constructor(
         }
     }
 
-    override suspend fun getPreferences(preferencesKeys: PreferencesKeys): Boolean {
+    override suspend fun setPreferences(preferencesKeys: PreferencesKeys, language: Language) {
+        val preferencesKey = stringPreferencesKey(preferencesKeys.name)
+        context.dataStore.edit { preferences ->
+            preferences[preferencesKey] = language.code
+        }
+    }
+
+    override suspend fun getBoolean(preferencesKeys: PreferencesKeys): Boolean {
         val preferencesKey = booleanPreferencesKey(preferencesKeys.name)
         val preferences = context.dataStore.data.first()
         return preferences[preferencesKey] ?: false
     }
 
+    override suspend fun getLanguage(preferencesKeys: PreferencesKeys): Language {
+        val preferencesKey = stringPreferencesKey(preferencesKeys.name)
+        val preferences = context.dataStore.data.first()
+        val value = preferences[preferencesKey]
+
+        if (value == null && preferencesKey.name == PreferencesKeys.SOURCE_LANGUAGE.name) return DEFAULT_SOURCE_LANGUAGE
+        if (value == null && preferencesKey.name == PreferencesKeys.TARGET_LANGUAGE.name) return DEFAULT_TARGET_LANGUAGE
+
+        return Language.entries.first { it.code == value }
+    }
+
     companion object {
         const val PREFERENCES_NAME = "PREFERENCES_NAME"
+        val DEFAULT_SOURCE_LANGUAGE = Language.English
+        val DEFAULT_TARGET_LANGUAGE = Language.Spanish
     }
 }

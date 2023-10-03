@@ -41,8 +41,8 @@ class AppModule {
 
     @Provides
     @Singleton
-    fun provideTranslator(dataStorePreferences: DataStorePreferences): TextTranslation {
-        return TextTranslationImpl(dataStorePreferences)
+    fun provideTranslator(): TextTranslation {
+        return TextTranslationImpl()
     }
 
     @Provides

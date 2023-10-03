@@ -15,8 +15,8 @@
         android:layout_height="wrap_content"
         android:layout_marginVertical="20dp"
         android:checked="true"
-        android:textSize="18sp"
-        android:text="Download the languages"/>
+        android:textSize="17sp"
+        android:text="@string/download_language_switch"/>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/list"

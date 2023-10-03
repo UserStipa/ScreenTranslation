@@ -20,7 +20,7 @@ class SelectLanguageFragment : Fragment(), ListActions {
     private var _binding: FragmentSelectLanguageBinding? = null
     private val binding get() = _binding!!
     private val args by navArgs<SelectLanguageFragmentArgs>()
-    private val languageType by lazy { args.languageType }
+    private val preferencesLanguageKey by lazy { args.preferencesLanguage }
     private lateinit var adapter: SelectLanguageAdapter
 
     @Inject
@@ -43,7 +43,7 @@ class SelectLanguageFragment : Fragment(), ListActions {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel.fetchData(languageType)
+        viewModel.getCurrentLanguage(preferencesLanguageKey)
         setAdapter()
         setObservers()
         setUi()
@@ -71,6 +71,6 @@ class SelectLanguageFragment : Fragment(), ListActions {
     }
 
     override fun onClickLanguage(language: Language) {
-        viewModel.setLanguage(languageType, language)
+        viewModel.setLanguage(preferencesLanguageKey, language)
     }
 }

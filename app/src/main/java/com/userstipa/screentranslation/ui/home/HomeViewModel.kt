@@ -1,16 +1,16 @@
 package com.userstipa.screentranslation.ui.home
 
-import android.util.Log
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.userstipa.screentranslation.data.DataStorePreferences
+import com.userstipa.screentranslation.data.PreferencesKeys
 import com.userstipa.screentranslation.domain.text_translate.TextTranslation
-import com.userstipa.screentranslation.models.Language
-import com.userstipa.screentranslation.models.LanguageType
-import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -19,60 +19,58 @@ class HomeViewModel @Inject constructor(
     private val textTranslation: TextTranslation
 ) : ViewModel() {
 
-    private val eventChannel = Channel<Event>()
-    val eventFlow = eventChannel.receiveAsFlow()
+    private val _homeUiState = MutableStateFlow(HomeUiState())
+    val uiState: StateFlow<HomeUiState> = _homeUiState
 
-    private val _sourceLanguage = MutableLiveData<Language>()
-    val sourceLanguage: LiveData<Language> get() = _sourceLanguage
+    private val _isTranslatorReady = MutableSharedFlow<Boolean>()
+    val isTranslatorReady: SharedFlow<Boolean> = _isTranslatorReady.asSharedFlow()
 
-    private val _targetLanguage = MutableLiveData<Language>()
-    val targetLanguage: LiveData<Language> get() = _targetLanguage
-
-    fun fetchData() {
+    fun fetchCurrentLanguages() {
         viewModelScope.launch {
-            _sourceLanguage.value =
-                dataStorePreferences.getLanguage(LanguageType.SOURCE) ?: Language.English
-            _targetLanguage.value =
-                dataStorePreferences.getLanguage(LanguageType.TARGET) ?: Language.Spanish
+            _homeUiState.update { currentUiState ->
+                val sourceLanguage =
+                    dataStorePreferences.getLanguage(PreferencesKeys.SOURCE_LANGUAGE)
+                val targetLanguage =
+                    dataStorePreferences.getLanguage(PreferencesKeys.TARGET_LANGUAGE)
+                currentUiState.copy(
+                    sourceLanguage = sourceLanguage,
+                    targetLanguage = targetLanguage
+                )
+            }
         }
     }
 
-    fun prepareTranslate() {
+    fun prepareTranslateService() {
         viewModelScope.launch {
-            textTranslation.create(
-                onLoading = { sourceLanguage, targetLanguage ->
-                    Log.d("TAG", "prepareTranslate: onLoading")
+            val sourceLanguage = dataStorePreferences.getLanguage(PreferencesKeys.SOURCE_LANGUAGE)
+            val targetLanguage = dataStorePreferences.getLanguage(PreferencesKeys.TARGET_LANGUAGE)
+            val isDownloadLanguage =
+                dataStorePreferences.getBoolean(PreferencesKeys.IS_LANGUAGES_DOWNLOAD)
+
+            textTranslation.create(sourceLanguage, targetLanguage, isDownloadLanguage,
+                onDownload = {
                     viewModelScope.launch {
-                        eventChannel.send(Event.TranslatorIsLoading(sourceLanguage, targetLanguage))
+                        _homeUiState.update { it.copy(isLoading = true, isServiceReady = false) }
                     }
                 },
-                onLoadingComplete = { sourceLanguage, targetLanguage ->
-                    Log.d("TAG", "prepareTranslate: onLoadingComplete")
+                onDownloadComplete = {
                     viewModelScope.launch {
-                        addDownloadedLanguages(sourceLanguage, targetLanguage)
-                        eventChannel.send(Event.TranslatorIsLoadingComplete(sourceLanguage, targetLanguage))
+                        _homeUiState.update { it.copy(isLoading = false, isServiceReady = false) }
+                    }
+                },
+                onError = { exception ->
+                    viewModelScope.launch {
+                        _homeUiState.update {
+                            it.copy(error = "Error: ${exception.message}", isServiceReady = false)
+                        }
                     }
                 },
                 onReady = {
-                    Log.d("TAG", "prepareTranslate: onReady")
                     viewModelScope.launch {
-                        eventChannel.send(Event.TranslatorIsReady)
+                        _homeUiState.update { it.copy(isServiceReady = true) }
+                        _isTranslatorReady.emit(true)
                     }
-                },
-                onError = {
-                    it.printStackTrace()
-                }
-
-            )
+                })
         }
     }
-
-    private fun addDownloadedLanguages(sourceLanguage: Language, targetLanguage: Language) {
-        viewModelScope.launch {
-            dataStorePreferences.addDownloadedLanguage(sourceLanguage)
-            dataStorePreferences.addDownloadedLanguage(targetLanguage)
-        }
-    }
-
-
 }

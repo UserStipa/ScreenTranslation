@@ -1,15 +1,17 @@
 package com.userstipa.screentranslation.domain.text_translate
 
 import com.userstipa.screentranslation.models.Language
-import java.lang.Exception
 
 interface TextTranslation {
 
-    suspend fun create(
-        onLoading: (sourceLanguage: Language, targetLanguage: Language) -> Unit,
-        onLoadingComplete: (sourceLanguage: Language, targetLanguage: Language) -> Unit,
+    fun create(
+        sourceLanguage: Language,
+        targetLanguage: Language,
+        isDownloadLanguage: Boolean,
+        onDownload: () -> Unit,
+        onDownloadComplete: () -> Unit,
         onReady: () -> Unit,
-        onError: (e: Exception) -> Unit
+        onError: (error: Exception) -> Unit
     )
 
     suspend fun translate(text: String): String

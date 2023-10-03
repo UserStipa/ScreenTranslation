@@ -7,7 +7,6 @@ import androidx.lifecycle.viewModelScope
 import com.userstipa.screentranslation.data.DataStorePreferences
 import com.userstipa.screentranslation.data.PreferencesKeys
 import com.userstipa.screentranslation.models.Language
-import com.userstipa.screentranslation.models.LanguageType
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -21,16 +20,15 @@ class SelectLanguageViewModel @Inject constructor(
     private val _isLanguageDownload = MutableLiveData<Boolean>()
     val isLanguageDownload: LiveData<Boolean> get() = _isLanguageDownload
 
-    fun fetchData(languageType: LanguageType) {
+    fun getCurrentLanguage(preferencesKeys: PreferencesKeys) {
         viewModelScope.launch {
-            _selectedLanguage.value = dataStorePreferences.getLanguage(languageType) ?: Language.English
-            _isLanguageDownload.value = dataStorePreferences.getPreferences(PreferencesKeys.IS_LANGUAGES_DOWNLOAD)
+            _selectedLanguage.value = dataStorePreferences.getLanguage(preferencesKeys)
         }
     }
 
-    fun setLanguage(languageType: LanguageType, language: Language) {
+    fun setLanguage(preferencesKeys: PreferencesKeys, language: Language) {
         viewModelScope.launch {
-            dataStorePreferences.putLanguage(languageType, language)
+            dataStorePreferences.setPreferences(preferencesKeys, language)
         }
     }
 
