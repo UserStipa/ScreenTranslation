@@ -32,7 +32,7 @@ class ModalBottomSheet : BottomSheetDialogFragment() {
 
     override fun onDismiss(dialog: DialogInterface) {
         super.onDismiss(dialog)
-        (activity as ModalBottomSheetActions).onCloseModalBottomSheet()
+        (activity as ModalBottomSheetCallback).onCloseModalBottomSheet()
     }
 
     companion object {
@@ -41,6 +41,6 @@ class ModalBottomSheet : BottomSheetDialogFragment() {
     }
 }
 
-interface ModalBottomSheetActions {
+interface ModalBottomSheetCallback {
     fun onCloseModalBottomSheet()
 }

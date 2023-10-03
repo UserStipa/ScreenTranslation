@@ -7,13 +7,18 @@
     <string name="next">Next</string>
     <string name="previous">Previous</string>
 
+    <!-- HomeFragment -->
     <string name="content_description_icon">ScreenTranslation icon</string>
     <string name="btn_launch_service_is_enable">Stop service</string>
     <string name="btn_launch_service_is_disable">Start service</string>
 
+    <!-- Notification -->
     <string name="notification_title">Screen Translation</string>
     <string name="notification_text">Click here</string>
 
-    <string name="projection_denied">MediaProjection permission denied</string>
+    <!-- TranslatorActivity -->
+    <string name="message_request_permission_denied">To translate text from the screen, the application needs to be granted permission</string>
+
+
     <string name="download_language_switch">Download the selected languages before launching the service</string>
 </resources>

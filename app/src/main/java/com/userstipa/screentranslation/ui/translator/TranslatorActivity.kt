@@ -12,14 +12,13 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.os.bundleOf
 import androidx.core.view.WindowCompat
-import com.google.android.material.snackbar.Snackbar
 import com.userstipa.screentranslation.R
 import com.userstipa.screentranslation.databinding.ActivityTranslatorBinding
 import com.userstipa.screentranslation.ui.service.MediaProjectionService
 import com.userstipa.screentranslation.ui.service.MediaProjectionServiceImpl
 import com.userstipa.screentranslation.ui.translator.ModalBottomSheet.Companion.OUTPUT_TEXT
 
-class TranslatorActivity : AppCompatActivity(), ServiceConnection, ModalBottomSheetActions {
+class TranslatorActivity : AppCompatActivity(), ServiceConnection, ModalBottomSheetCallback {
 
     private lateinit var binding: ActivityTranslatorBinding
     private lateinit var service: MediaProjectionService
@@ -29,9 +28,7 @@ class TranslatorActivity : AppCompatActivity(), ServiceConnection, ModalBottomSh
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             val intent = result.data
             if (result.resultCode != Activity.RESULT_OK) {
-                Snackbar.make(
-                    binding.root, getString(R.string.projection_denied), Snackbar.LENGTH_SHORT
-                ).show()
+                showModelBottomSheet(getString(R.string.message_request_permission_denied))
             }
             if (result.resultCode == Activity.RESULT_OK && intent != null) {
                 service.grandPermission(intent)
@@ -70,10 +67,16 @@ class TranslatorActivity : AppCompatActivity(), ServiceConnection, ModalBottomSh
 
     private fun translateDisplay() {
         if (isServiceConnected) service.translateScreen {
-            ModalBottomSheet().apply {
-                arguments = bundleOf(OUTPUT_TEXT to it)
-                show(supportFragmentManager, ModalBottomSheet.TAG)
-            }
+            showModelBottomSheet(it)
+        }
+    }
+
+    private fun showModelBottomSheet(text: String) {
+        ModalBottomSheet().apply {
+            arguments = bundleOf(
+                OUTPUT_TEXT to text
+            )
+            show(supportFragmentManager, ModalBottomSheet.TAG)
         }
     }
 
