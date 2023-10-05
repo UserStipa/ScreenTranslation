@@ -15,7 +15,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.userstipa.screentranslation.App
 import com.userstipa.screentranslation.databinding.FragmentSelectLanguageBinding
 import com.userstipa.screentranslation.di.ViewModelFactory
-import com.userstipa.screentranslation.models.Language
+import com.userstipa.screentranslation.languages.Language
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -54,7 +54,7 @@ class SelectLanguageFragment : Fragment(), ListActions {
     }
 
     private fun setAdapter() {
-        adapter = SelectLanguageAdapter(Language.English, this)
+        adapter = SelectLanguageAdapter(preferencesLanguageKey, Language.English, this)
         binding.list.layoutManager = LinearLayoutManager(requireContext())
         binding.list.adapter = adapter
     }

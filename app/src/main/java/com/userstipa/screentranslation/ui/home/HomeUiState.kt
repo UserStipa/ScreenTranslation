@@ -1,7 +1,7 @@
 package com.userstipa.screentranslation.ui.home
 
 import com.userstipa.screentranslation.data.DataStorePreferencesImpl
-import com.userstipa.screentranslation.models.Language
+import com.userstipa.screentranslation.languages.Language
 
 data class HomeUiState(
     val isLoading: Boolean = false,

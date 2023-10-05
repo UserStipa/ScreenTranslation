@@ -8,7 +8,7 @@ import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import com.userstipa.screentranslation.data.DataStorePreferencesImpl.Companion.PREFERENCES_NAME
-import com.userstipa.screentranslation.models.Language
+import com.userstipa.screentranslation.languages.Language
 import kotlinx.coroutines.flow.first
 import javax.inject.Inject
 

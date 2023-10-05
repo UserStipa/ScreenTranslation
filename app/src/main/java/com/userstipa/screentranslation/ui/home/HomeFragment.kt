@@ -63,6 +63,8 @@ class HomeFragment : Fragment(), ServiceConnection {
                     binding.targetLanguage.text = it.targetLanguage.title
                     binding.progressBar.isVisible = it.isLoading
                     binding.launchService.isEnabled = !it.isLoading
+                    binding.sourceLanguage.isEnabled = !it.isLoading
+                    binding.targetLanguage.isEnabled = !it.isLoading
                 }
             }
         }
@@ -132,6 +134,8 @@ class HomeFragment : Fragment(), ServiceConnection {
     override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
         isServiceConnected = true
         binding.icon.setImageResource(R.drawable.baseline_translate_enable_24)
+        binding.targetLanguage.isEnabled = false
+        binding.sourceLanguage.isEnabled = false
         binding.launchService.isClickable = true
         binding.launchService.text = getString(R.string.btn_launch_service_is_enable)
     }
@@ -139,6 +143,8 @@ class HomeFragment : Fragment(), ServiceConnection {
     override fun onServiceDisconnected(name: ComponentName?) {
         isServiceConnected = false
         binding.icon.setImageResource(R.drawable.baseline_translate_disable_24)
+        binding.targetLanguage.isEnabled = true
+        binding.sourceLanguage.isEnabled = true
         binding.launchService.isClickable = true
         binding.launchService.text = getString(R.string.btn_launch_service_is_disable)
     }

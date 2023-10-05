@@ -3,15 +3,21 @@ package com.userstipa.screentranslation.ui.select_language
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.userstipa.screentranslation.data.PreferencesKeys
 import com.userstipa.screentranslation.databinding.ItemListSelectLanguageBinding
-import com.userstipa.screentranslation.models.Language
+import com.userstipa.screentranslation.languages.Language
 
 class SelectLanguageAdapter(
+    preferenceLanguageKey: PreferencesKeys,
     private var selectedLanguage: Language,
     private val listener: ListActions
 ) : RecyclerView.Adapter<SelectLanguageAdapter.Holder>() {
 
-    private val list: List<Language> = Language.entries
+    private val list: List<Language> = when(preferenceLanguageKey) {
+        PreferencesKeys.SOURCE_LANGUAGE -> Language.getSourceLanguages()
+        PreferencesKeys.TARGET_LANGUAGE -> Language.getTargetLanguages()
+        else -> { throw Exception("${this::javaClass.name} cannot init list") }
+    }
 
     private var previousLanguageIndex = list.indexOf(selectedLanguage)
 

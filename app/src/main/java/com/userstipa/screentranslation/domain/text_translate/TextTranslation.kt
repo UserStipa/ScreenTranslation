@@ -1,6 +1,6 @@
 package com.userstipa.screentranslation.domain.text_translate
 
-import com.userstipa.screentranslation.models.Language
+import com.userstipa.screentranslation.languages.Language
 
 interface TextTranslation {
 

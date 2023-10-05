@@ -4,7 +4,7 @@ import com.google.mlkit.common.model.DownloadConditions
 import com.google.mlkit.nl.translate.Translation
 import com.google.mlkit.nl.translate.Translator
 import com.google.mlkit.nl.translate.TranslatorOptions
-import com.userstipa.screentranslation.models.Language
+import com.userstipa.screentranslation.languages.Language
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 

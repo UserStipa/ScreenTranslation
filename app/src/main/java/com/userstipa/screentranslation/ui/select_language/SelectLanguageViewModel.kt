@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.userstipa.screentranslation.data.DataStorePreferences
 import com.userstipa.screentranslation.data.PreferencesKeys
-import com.userstipa.screentranslation.models.Language
+import com.userstipa.screentranslation.languages.Language
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
