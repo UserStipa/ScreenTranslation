@@ -10,8 +10,6 @@ import android.os.Binder
 import android.os.Handler
 import android.os.HandlerThread
 import android.os.IBinder
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import com.userstipa.screentranslation.App
 import com.userstipa.screentranslation.domain.text_scanner.TextScanner
 import com.userstipa.screentranslation.domain.text_translate.TextTranslation
@@ -42,9 +40,6 @@ class MediaProjectionServiceImpl : Service(), MediaProjectionService {
     private val job = SupervisorJob()
     private val handlerThread = HandlerThread("ServiceThread")
     private val serviceCoroutineScope: CoroutineScope
-
-    private val _result = MutableLiveData<String>()
-    override val result: LiveData<String> get() = _result
 
     init {
         handlerThread.start()
