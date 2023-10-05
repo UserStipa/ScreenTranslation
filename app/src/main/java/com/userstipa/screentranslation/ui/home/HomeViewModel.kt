@@ -19,7 +19,10 @@ class HomeViewModel @Inject constructor(
     private val textTranslation: TextTranslation
 ) : ViewModel() {
 
-    private val _homeUiState = MutableStateFlow(HomeUiState())
+    private val _homeUiState = MutableStateFlow(HomeUiState(
+        sourceLanguage = dataStorePreferences.defaultSourceLanguage,
+        targetLanguage = dataStorePreferences.defaultTargetLanguage
+    ))
     val uiState: StateFlow<HomeUiState> = _homeUiState
 
     private val _isTranslatorReady = MutableSharedFlow<Boolean>()

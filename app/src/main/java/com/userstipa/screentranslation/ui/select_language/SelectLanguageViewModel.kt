@@ -14,17 +14,21 @@ class SelectLanguageViewModel @Inject constructor(
     private val dataStorePreferences: DataStorePreferences
 ) : ViewModel() {
 
-    private val _uiState = MutableStateFlow(SelectLanguageUiState())
+    private val _uiState =
+        MutableStateFlow(SelectLanguageUiState(selectedLanguage = dataStorePreferences.defaultSourceLanguage))
     val uiState: StateFlow<SelectLanguageUiState> = _uiState
 
     fun fetchData(preferencesKeys: PreferencesKeys) {
         viewModelScope.launch {
-            val isLanguagesDownloadEnable = dataStorePreferences.getBoolean(PreferencesKeys.IS_LANGUAGES_DOWNLOAD)
+            val isLanguagesDownloadEnable =
+                dataStorePreferences.getBoolean(PreferencesKeys.IS_LANGUAGES_DOWNLOAD)
             val selectedLanguage = dataStorePreferences.getLanguage(preferencesKeys)
-            _uiState.emit(SelectLanguageUiState(
-                isDownloadLanguagesEnable = isLanguagesDownloadEnable,
-                selectedLanguage = selectedLanguage
-            ))
+            _uiState.emit(
+                SelectLanguageUiState(
+                    isDownloadLanguagesEnable = isLanguagesDownloadEnable,
+                    selectedLanguage = selectedLanguage
+                )
+            )
         }
     }
 
