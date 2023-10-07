@@ -21,14 +21,14 @@ class TextScannerImpl : TextScanner {
             try {
                 recognizer!!.process(bitmap, ROTATION_DEGREES)
                     .addOnFailureListener {
-                        val text = "Something went wrong... Error: ${it.message ?: "Message is empty"}"
-                        continuation.resume(ResultWrapper.Error(text))
+                        val message = "Something went wrong... Error: ${it.message ?: "Something went wrong... Fail caused by ${this::class.simpleName}"}"
+                        continuation.resume(ResultWrapper.Error(message))
                     }
                     .addOnSuccessListener {
                         continuation.resume(ResultWrapper.Success(it.text))
                     }
             } catch (e: Throwable) {
-                continuation.resume(ResultWrapper.Error(e.message ?: "Message is empty"))
+                continuation.resume(ResultWrapper.Error(e.message ?: "Something went wrong... Exception caused by ${this::class.simpleName}"))
             }
         }
     }

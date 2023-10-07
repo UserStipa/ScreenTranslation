@@ -64,11 +64,18 @@ class TextTranslatorImpl @Inject constructor(
                         continuation.resume(ResultWrapper.Success(it))
                     }
                     .addOnFailureListener {
-                        val message = "Something went wrong... Error: ${it.message ?: "Message is empty"}"
+                        val message =
+                            "Something went wrong... Error: ${it.message ?: "Something went wrong... Fail caused by ${this::class.simpleName}"}"
                         continuation.resume(ResultWrapper.Error(message))
                     }
             } catch (e: Throwable) {
-                continuation.resume(ResultWrapper.Error(e.message ?: "Message is empty"))
+                throw e
+                continuation.resume(
+                    ResultWrapper.Error(
+                        e.message
+                            ?: "Something went wrong... Exception caused by ${this::class.simpleName}"
+                    )
+                )
             }
         }
     }
