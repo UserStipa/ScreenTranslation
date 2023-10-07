@@ -1,10 +1,11 @@
 package com.userstipa.screentranslation.domain.text_translate
 
+import com.userstipa.screentranslation.domain.wrapper.ResultWrapper
 import com.userstipa.screentranslation.languages.Language
 
-interface TextTranslation {
+interface TextTranslator {
 
-    fun create(
+    fun init(
         sourceLanguage: Language,
         targetLanguage: Language,
         isDownloadLanguage: Boolean,
@@ -14,8 +15,10 @@ interface TextTranslation {
         onError: (error: Exception) -> Unit
     )
 
-    suspend fun translate(text: String): String
+    suspend fun translateOnline(text: String): ResultWrapper<String>
 
-    fun close()
+    suspend fun translateOffline(text: String): ResultWrapper<String>
+
+    fun clear()
 
 }

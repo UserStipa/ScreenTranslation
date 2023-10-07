@@ -21,7 +21,7 @@
         tools:layout="@layout/fragment_select_language" >
         <argument
             android:name="PreferencesLanguage"
-            app:argType="com.userstipa.screentranslation.data.PreferencesKeys" />
+            app:argType="com.userstipa.screentranslation.data.local.PreferencesKeys" />
     </fragment>
 
 </navigation>

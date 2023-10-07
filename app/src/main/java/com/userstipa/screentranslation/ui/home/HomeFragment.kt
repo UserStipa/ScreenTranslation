@@ -18,7 +18,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.userstipa.screentranslation.App
 import com.userstipa.screentranslation.R
-import com.userstipa.screentranslation.data.PreferencesKeys
+import com.userstipa.screentranslation.data.local.PreferencesKeys
 import com.userstipa.screentranslation.databinding.FragmentHomeBinding
 import com.userstipa.screentranslation.di.ViewModelFactory
 import com.userstipa.screentranslation.ui.service.MediaProjectionServiceImpl

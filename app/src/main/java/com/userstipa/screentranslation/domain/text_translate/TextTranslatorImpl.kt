@@ -4,15 +4,20 @@ import com.google.mlkit.common.model.DownloadConditions
 import com.google.mlkit.nl.translate.Translation
 import com.google.mlkit.nl.translate.Translator
 import com.google.mlkit.nl.translate.TranslatorOptions
+import com.userstipa.screentranslation.data.api.TranslateApi
+import com.userstipa.screentranslation.domain.wrapper.ResultWrapper
 import com.userstipa.screentranslation.languages.Language
+import javax.inject.Inject
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
-class TextTranslationImpl : TextTranslation {
+class TextTranslatorImpl @Inject constructor(
+    private val api: TranslateApi
+) : TextTranslator {
 
     private var translator: Translator? = null
 
-    override fun create(
+    override fun init(
         sourceLanguage: Language,
         targetLanguage: Language,
         isDownloadLanguage: Boolean,
@@ -51,19 +56,29 @@ class TextTranslationImpl : TextTranslation {
     }
 
 
-    override suspend fun translate(text: String): String {
+    override suspend fun translateOffline(text: String): ResultWrapper<String> {
         return suspendCoroutine { continuation ->
-            translator!!.translate(text)
-                .addOnSuccessListener {
-                    continuation.resume(it)
-                }
-                .addOnFailureListener {
-                    continuation.resume("Something went wrong... Error: ${it.message ?: "Message is empty"}")
-                }
+            try {
+                translator!!.translate(text)
+                    .addOnSuccessListener {
+                        continuation.resume(ResultWrapper.Success(it))
+                    }
+                    .addOnFailureListener {
+                        val message = "Something went wrong... Error: ${it.message ?: "Message is empty"}"
+                        continuation.resume(ResultWrapper.Error(message))
+                    }
+            } catch (e: Throwable) {
+                continuation.resume(ResultWrapper.Error(e.message ?: "Message is empty"))
+            }
         }
     }
 
-    override fun close() {
+    override suspend fun translateOnline(text: String): ResultWrapper<String> {
+        return ResultWrapper.Success(text)
+    }
+
+    override fun clear() {
         translator?.close()
+        translator = null
     }
 }

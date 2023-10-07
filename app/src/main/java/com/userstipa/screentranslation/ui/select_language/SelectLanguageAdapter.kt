@@ -3,7 +3,7 @@ package com.userstipa.screentranslation.ui.select_language
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.userstipa.screentranslation.data.PreferencesKeys
+import com.userstipa.screentranslation.data.local.PreferencesKeys
 import com.userstipa.screentranslation.databinding.ItemListSelectLanguageBinding
 import com.userstipa.screentranslation.languages.Language
 

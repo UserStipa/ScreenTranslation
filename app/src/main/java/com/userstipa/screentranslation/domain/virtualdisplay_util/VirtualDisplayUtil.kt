@@ -1,4 +1,4 @@
-package com.userstipa.screentranslation.ui.uitls.virtualdisplay_util
+package com.userstipa.screentranslation.domain.virtualdisplay_util
 
 import android.hardware.display.VirtualDisplay
 import android.media.projection.MediaProjection

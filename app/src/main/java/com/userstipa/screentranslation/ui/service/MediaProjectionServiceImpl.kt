@@ -11,10 +11,9 @@ import android.os.Handler
 import android.os.HandlerThread
 import android.os.IBinder
 import com.userstipa.screentranslation.App
-import com.userstipa.screentranslation.domain.text_scanner.TextScanner
-import com.userstipa.screentranslation.domain.text_translate.TextTranslation
+import com.userstipa.screentranslation.domain.wrapper.ResultWrapper
+import com.userstipa.screentranslation.domain.screen_translator.ScreenTranslator
 import com.userstipa.screentranslation.ui.uitls.notification_util.NotificationUtil
-import com.userstipa.screentranslation.ui.uitls.screenshot_util.ScreenshotUtil
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.android.asCoroutineDispatcher
@@ -27,13 +26,7 @@ class MediaProjectionServiceImpl : Service(), MediaProjectionService {
     lateinit var notificationUtil: NotificationUtil
 
     @Inject
-    lateinit var screenshotUtil: ScreenshotUtil
-
-    @Inject
-    lateinit var textScanner: TextScanner
-
-    @Inject
-    lateinit var textTranslator: TextTranslation
+    lateinit var screenTranslator: ScreenTranslator
 
     private val binder = LocalBinder()
     private var mediaProjection: MediaProjection? = null
@@ -51,7 +44,7 @@ class MediaProjectionServiceImpl : Service(), MediaProjectionService {
     override fun onCreate() {
         super.onCreate()
         (applicationContext as App).appComponent.inject(this)
-        textScanner.create()
+        screenTranslator.init()
         startForeground(notificationUtil.getId(), notificationUtil.create())
     }
 
@@ -63,14 +56,19 @@ class MediaProjectionServiceImpl : Service(), MediaProjectionService {
         return true
     }
 
-    override fun translateScreen(result: (text: String) -> Unit) {
+    override fun translateScreen(callback: (text: String) -> Unit) {
         if (mediaProjection == null) return
 
         serviceCoroutineScope.launch {
-            val image = screenshotUtil.createScreenshot(mediaProjection!!)
-            val text = textScanner.getText(image)
-            val translatedText = textTranslator.translate(text)
-            result.invoke(translatedText)
+            when (val result = screenTranslator.translateTextFromDisplay(mediaProjection!!)) {
+                is ResultWrapper.Error -> {
+                    callback.invoke(result.message)
+                }
+
+                is ResultWrapper.Success -> {
+                    callback.invoke(result.data)
+                }
+            }
         }
     }
 
@@ -81,7 +79,7 @@ class MediaProjectionServiceImpl : Service(), MediaProjectionService {
 
     override fun onDestroy() {
         super.onDestroy()
-        textScanner.close()
+        screenTranslator.clear()
         handlerThread.quit()
         job.cancel()
     }

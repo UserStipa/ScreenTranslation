@@ -1,4 +1,4 @@
-package com.userstipa.screentranslation.data
+package com.userstipa.screentranslation.data.local
 
 import android.content.Context
 import androidx.datastore.core.DataStore

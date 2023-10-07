@@ -1,4 +1,4 @@
-package com.userstipa.screentranslation.data
+package com.userstipa.screentranslation.data.local
 
 import com.userstipa.screentranslation.languages.Language
 

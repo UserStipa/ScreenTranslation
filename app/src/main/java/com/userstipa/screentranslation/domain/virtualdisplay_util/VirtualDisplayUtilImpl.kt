@@ -1,4 +1,4 @@
-package com.userstipa.screentranslation.ui.uitls.virtualdisplay_util
+package com.userstipa.screentranslation.domain.virtualdisplay_util
 
 import android.content.Context
 import android.hardware.display.DisplayManager
