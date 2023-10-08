@@ -80,6 +80,9 @@ class HomeFragment : Fragment(), ServiceConnection {
             if (isServiceConnected) stopService()
             else viewModel.prepareTranslateService()
         }
+        binding.switchButton.setOnCheckedChangeListener { _, isChecked ->
+            viewModel.enableOnlineMode(isChecked)
+        }
 
         binding.sourceLanguage.setOnClickListener {
             val actions =

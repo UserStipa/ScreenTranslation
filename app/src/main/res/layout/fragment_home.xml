@@ -51,6 +51,13 @@
                 android:layout_height="wrap_content"
                 android:text="@string/btn_launch_service_is_disable" />
 
+            <com.google.android.material.materialswitch.MaterialSwitch
+                android:id="@+id/switchButton"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:checked="true"
+                android:text="Online translate"/>
+
             <Button
                 android:id="@+id/sourceLanguage"
                 style="@style/Widget.Material3.Button.TextButton"

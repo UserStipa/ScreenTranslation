@@ -73,4 +73,10 @@ class HomeViewModel @Inject constructor(
                 })
         }
     }
+
+    fun enableOnlineMode(boolean: Boolean) {
+        viewModelScope.launch {
+            dataStorePreferences.setPreferences(PreferencesKeys.IS_ONLINE_MODE_ENABLE, boolean)
+        }
+    }
 }

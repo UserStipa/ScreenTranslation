@@ -77,7 +77,23 @@ class TextTranslatorImpl @Inject constructor(
     }
 
     override suspend fun translateOnline(text: String): ResultWrapper<String> {
-        return ResultWrapper.Success(text)
+        return try {
+            val sourceLanguage = dataStore.getLanguage(PreferencesKeys.SOURCE_LANGUAGE)
+            val targetLanguage = dataStore.getLanguage(PreferencesKeys.TARGET_LANGUAGE)
+            val networkResponse = api.translate(sourceLanguage.code, targetLanguage.code, text)
+            val networkBody = networkResponse.body()
+            if (networkResponse.isSuccessful && networkBody != null) {
+                ResultWrapper.Success(networkBody.translatedText)
+            } else {
+                val message =
+                    "Error code: ${networkResponse.code()} Message: ${networkResponse.message()}"
+                ResultWrapper.Error(message)
+            }
+        } catch (e: Throwable) {
+            val message =
+                "Something went wrong... Error: ${e.message ?: "Something went wrong... Fail caused by ${this::class.simpleName}"}"
+            ResultWrapper.Error(message)
+        }
     }
 
     override fun clear() {
