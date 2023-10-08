@@ -68,8 +68,8 @@ class AppModule {
 
     @Provides
     @Singleton
-    fun provideTranslator(api: TranslateApi): TextTranslator {
-        return TextTranslatorImpl(api)
+    fun provideTranslator(api: TranslateApi, dataStorePreferences: DataStorePreferences): TextTranslator {
+        return TextTranslatorImpl(api, dataStorePreferences)
     }
 
     @Provides
@@ -77,9 +77,9 @@ class AppModule {
     fun provideScreenTranslator(
         textTranslator: TextTranslator,
         textScanner: TextScanner,
-        screenShortUtil: ScreenshotUtil
+        screenshotUtil: ScreenshotUtil
     ): ScreenTranslator {
-        return ScreenTranslatorImpl(textTranslator, textScanner, screenShortUtil)
+        return ScreenTranslatorImpl(textTranslator, textScanner, screenshotUtil)
     }
 
     @Provides

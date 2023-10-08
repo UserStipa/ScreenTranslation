@@ -1,14 +1,10 @@
 package com.userstipa.screentranslation.domain.text_translate
 
 import com.userstipa.screentranslation.domain.wrapper.ResultWrapper
-import com.userstipa.screentranslation.languages.Language
 
 interface TextTranslator {
 
-    fun init(
-        sourceLanguage: Language,
-        targetLanguage: Language,
-        isDownloadLanguage: Boolean,
+    suspend fun init(
         onDownload: () -> Unit,
         onDownloadComplete: () -> Unit,
         onReady: () -> Unit,

@@ -19,10 +19,12 @@ class HomeViewModel @Inject constructor(
     private val textTranslation: TextTranslator
 ) : ViewModel() {
 
-    private val _homeUiState = MutableStateFlow(HomeUiState(
-        sourceLanguage = dataStorePreferences.defaultSourceLanguage,
-        targetLanguage = dataStorePreferences.defaultTargetLanguage
-    ))
+    private val _homeUiState = MutableStateFlow(
+        HomeUiState(
+            sourceLanguage = dataStorePreferences.defaultSourceLanguage,
+            targetLanguage = dataStorePreferences.defaultTargetLanguage
+        )
+    )
     val uiState: StateFlow<HomeUiState> = _homeUiState
 
     private val _isTranslatorReady = MutableSharedFlow<Boolean>()
@@ -45,12 +47,7 @@ class HomeViewModel @Inject constructor(
 
     fun prepareTranslateService() {
         viewModelScope.launch {
-            val sourceLanguage = dataStorePreferences.getLanguage(PreferencesKeys.SOURCE_LANGUAGE)
-            val targetLanguage = dataStorePreferences.getLanguage(PreferencesKeys.TARGET_LANGUAGE)
-            val isDownloadLanguage =
-                dataStorePreferences.getBoolean(PreferencesKeys.IS_LANGUAGES_DOWNLOAD)
-
-            textTranslation.init(sourceLanguage, targetLanguage, isDownloadLanguage,
+            textTranslation.init(
                 onDownload = {
                     viewModelScope.launch {
                         _homeUiState.update { it.copy(isLoading = true, isServiceReady = false) }
