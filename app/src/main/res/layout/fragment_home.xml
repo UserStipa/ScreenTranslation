@@ -11,7 +11,7 @@
         android:layout_above="@id/buttonsLayout">
 
         <ImageView
-            android:id="@+id/icon"
+            android:id="@+id/launchService"
             android:layout_width="200dp"
             android:layout_height="200dp"
             android:layout_centerInParent="true"
@@ -46,29 +46,20 @@
             android:orientation="vertical">
 
             <Button
-                android:id="@+id/launchService"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/btn_launch_service_is_disable" />
-
-            <com.google.android.material.materialswitch.MaterialSwitch
-                android:id="@+id/switchButton"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:checked="true"
-                android:text="Online translate"/>
-
-            <Button
                 android:id="@+id/sourceLanguage"
-                style="@style/Widget.Material3.Button.TextButton"
+                style="@style/Widget.Material3.Button.ElevatedButton"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="58dp"
+                android:layout_marginVertical="5dp"
+                android:layout_weight="1"/>
 
             <Button
                 android:id="@+id/targetLanguage"
-                style="@style/Widget.Material3.Button.TextButton"
+                style="@style/Widget.Material3.Button.ElevatedButton"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="58dp"
+                android:layout_marginVertical="5dp"
+                android:layout_weight="1"/>
 
         </LinearLayout>
 

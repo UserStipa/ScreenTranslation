@@ -80,10 +80,6 @@ class HomeFragment : Fragment(), ServiceConnection {
             if (isServiceConnected) stopService()
             else viewModel.prepareTranslateService()
         }
-        binding.switchButton.setOnCheckedChangeListener { _, isChecked ->
-            viewModel.enableOnlineMode(isChecked)
-        }
-
         binding.sourceLanguage.setOnClickListener {
             val actions =
                 HomeFragmentDirections.actionHomeFragmentToSelectLanguageFragment(PreferencesKeys.SOURCE_LANGUAGE)
@@ -136,20 +132,18 @@ class HomeFragment : Fragment(), ServiceConnection {
 
     override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
         isServiceConnected = true
-        binding.icon.setImageResource(R.drawable.baseline_translate_enable_24)
         binding.targetLanguage.isEnabled = false
         binding.sourceLanguage.isEnabled = false
+        binding.launchService.setImageResource(R.drawable.baseline_translate_enable_24)
         binding.launchService.isClickable = true
-        binding.launchService.text = getString(R.string.btn_launch_service_is_enable)
     }
 
     override fun onServiceDisconnected(name: ComponentName?) {
         isServiceConnected = false
-        binding.icon.setImageResource(R.drawable.baseline_translate_disable_24)
         binding.targetLanguage.isEnabled = true
         binding.sourceLanguage.isEnabled = true
+        binding.launchService.setImageResource(R.drawable.baseline_translate_disable_24)
         binding.launchService.isClickable = true
-        binding.launchService.text = getString(R.string.btn_launch_service_is_disable)
     }
 
 }
