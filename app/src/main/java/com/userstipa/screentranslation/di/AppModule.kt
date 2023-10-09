@@ -77,9 +77,10 @@ class AppModule {
     fun provideScreenTranslator(
         textTranslator: TextTranslator,
         textScanner: TextScanner,
-        screenshotUtil: ScreenshotUtil
+        screenshotUtil: ScreenshotUtil,
+        context: Context
     ): ScreenTranslator {
-        return ScreenTranslatorImpl(textTranslator, textScanner, screenshotUtil)
+        return ScreenTranslatorImpl(textTranslator, textScanner, screenshotUtil, context)
     }
 
     @Provides
