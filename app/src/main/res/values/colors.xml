@@ -2,6 +2,7 @@
 <resources>
     <color name="seed">#2c75b8</color>
     <color name="md_theme_light_primary">#0361A3</color>
+    <color name="md_theme_light_primaryDark">#BBD5E8</color>
     <color name="md_theme_light_onPrimary">#FFFFFF</color>
     <color name="md_theme_light_primaryContainer">#D1E4FF</color>
     <color name="md_theme_light_onPrimaryContainer">#001D36</color>
@@ -32,6 +33,7 @@
     <color name="md_theme_light_outlineVariant">#C3C6CF</color>
     <color name="md_theme_light_scrim">#000000</color>
     <color name="md_theme_dark_primary">#9ECAFF</color>
+    <color name="md_theme_dark_primaryDark">#33383E</color>
     <color name="md_theme_dark_onPrimary">#003258</color>
     <color name="md_theme_dark_primaryContainer">#00497D</color>
     <color name="md_theme_dark_onPrimaryContainer">#D1E4FF</color>
