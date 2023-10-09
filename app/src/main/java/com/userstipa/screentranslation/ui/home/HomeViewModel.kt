@@ -45,7 +45,7 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    fun prepareTranslateService() {
+    fun prepareTextTranslator() {
         viewModelScope.launch {
             textTranslation.init(
                 onDownload = {
@@ -71,12 +71,6 @@ class HomeViewModel @Inject constructor(
                         _isTranslatorReady.emit(true)
                     }
                 })
-        }
-    }
-
-    fun enableOnlineMode(boolean: Boolean) {
-        viewModelScope.launch {
-            dataStorePreferences.setPreferences(PreferencesKeys.IS_ONLINE_MODE_ENABLE, boolean)
         }
     }
 }

@@ -78,7 +78,7 @@ class HomeFragment : Fragment(), ServiceConnection {
     private fun setUi() {
         binding.launchService.setOnClickListener {
             if (isServiceConnected) stopService()
-            else viewModel.prepareTranslateService()
+            else viewModel.prepareTextTranslator()
         }
         binding.sourceLanguage.setOnClickListener {
             val actions =

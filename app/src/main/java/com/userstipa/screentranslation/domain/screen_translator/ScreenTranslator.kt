@@ -9,7 +9,6 @@ interface ScreenTranslator {
 
     suspend fun translateTextFromDisplay(
         mediaProjection: MediaProjection,
-        internetStatus: InternetStatus = InternetStatus.OFFLINE
     ): ResultWrapper<String>
 
     fun clear()

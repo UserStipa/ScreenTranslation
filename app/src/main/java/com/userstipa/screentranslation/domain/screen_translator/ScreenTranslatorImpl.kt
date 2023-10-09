@@ -24,7 +24,7 @@ class ScreenTranslatorImpl @Inject constructor(
         textScanner.init()
     }
 
-    override suspend fun translateTextFromDisplay(mediaProjection: MediaProjection, internetStatus: InternetStatus): ResultWrapper<String> {
+    override suspend fun translateTextFromDisplay(mediaProjection: MediaProjection): ResultWrapper<String> {
         val screenshot = when(val result = screenshotUtil.createScreenshot(mediaProjection)) {
             is ResultWrapper.Error -> return ResultWrapper.Error(result.message)
             is ResultWrapper.Success -> result.data
