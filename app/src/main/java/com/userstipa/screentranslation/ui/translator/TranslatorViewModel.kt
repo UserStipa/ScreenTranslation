@@ -21,7 +21,7 @@ class TranslatorViewModel @Inject constructor(
     val uiState: StateFlow<TranslatorUiState> = _uiState
 
     fun translateDisplay(mediaProjection: MediaProjection) {
-        viewModelScope.launch(dispatcher.main) {
+        viewModelScope.launch(dispatcher.io) {
 
             _uiState.update { currentState -> currentState.copy(isLoading = true) }
 

@@ -6,15 +6,18 @@ import android.hardware.display.VirtualDisplay
 import android.media.Image
 import android.media.ImageReader
 import android.media.projection.MediaProjection
-import com.userstipa.screentranslation.domain.wrapper.ResultWrapper
+import com.userstipa.screentranslation.di.dispatchers.DispatchersProvider
 import com.userstipa.screentranslation.domain.virtualdisplay_util.VirtualDisplayUtil
+import com.userstipa.screentranslation.domain.wrapper.ResultWrapper
+import kotlinx.coroutines.withContext
 import java.nio.ByteBuffer
 import javax.inject.Inject
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
 class ScreenshotUtilImpl @Inject constructor(
-    private val virtualDisplayUtil: VirtualDisplayUtil
+    private val virtualDisplayUtil: VirtualDisplayUtil,
+    private val dispatchers: DispatchersProvider
 ) : ScreenshotUtil {
 
     private val displayWidth = virtualDisplayUtil.getDisplayWidth()
@@ -23,23 +26,30 @@ class ScreenshotUtilImpl @Inject constructor(
     private var imageReader: ImageReader? = null
 
     override suspend fun createScreenshot(mediaProjection: MediaProjection): ResultWrapper<Bitmap> {
-        return suspendCoroutine { continuation ->
-            try {
-                virtualDisplay = virtualDisplayUtil.create(mediaProjection)
-                imageReader = ImageReader.newInstance(displayWidth, displayHeight, PixelFormat.RGBA_8888, 1)
-                virtualDisplay!!.surface = imageReader!!.surface
+        return withContext(dispatchers.main) {
+            suspendCoroutine { continuation ->
+                try {
+                    virtualDisplay = virtualDisplayUtil.create(mediaProjection)
+                    imageReader = ImageReader.newInstance(
+                        displayWidth,
+                        displayHeight,
+                        PixelFormat.RGBA_8888,
+                        1
+                    )
+                    virtualDisplay!!.surface = imageReader!!.surface
 
-                imageReader!!.setOnImageAvailableListener({ reader ->
-                    val image = reader.acquireLatestImage()
-                    val bitmap = imageToBitmap(image)
+                    imageReader!!.setOnImageAvailableListener({ reader ->
+                        val image = reader.acquireLatestImage()
+                        val bitmap = imageToBitmap(image)
+                        clear()
+                        mediaProjection.stop()
+                        continuation.resume(ResultWrapper.Success(bitmap))
+                    }, null)
+                } catch (e: Throwable) {
                     clear()
                     mediaProjection.stop()
-                    continuation.resume(ResultWrapper.Success(bitmap))
-                }, null)
-            } catch (e: Throwable) {
-                clear()
-                mediaProjection.stop()
-                continuation.resume(ResultWrapper.Error(e.message ?: "Something went wrong..."))
+                    continuation.resume(ResultWrapper.Error(e.message ?: "Something went wrong..."))
+                }
             }
         }
     }

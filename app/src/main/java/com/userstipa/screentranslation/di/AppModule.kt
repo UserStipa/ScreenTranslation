@@ -36,8 +36,8 @@ class AppModule {
 
     @Provides
     @Singleton
-    fun provideScreenshotUtil(virtualDisplayUtil: VirtualDisplayUtil): ScreenshotUtil {
-        return ScreenshotUtilImpl(virtualDisplayUtil)
+    fun provideScreenshotUtil(virtualDisplayUtil: VirtualDisplayUtil, dispatchersProvider: DispatchersProvider): ScreenshotUtil {
+        return ScreenshotUtilImpl(virtualDisplayUtil, dispatchersProvider)
     }
 
     @Provides
