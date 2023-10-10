@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.userstipa.screentranslation.data.local.DataStorePreferences
 import com.userstipa.screentranslation.data.local.PreferencesKeys
+import com.userstipa.screentranslation.di.dispatchers.DispatchersProvider
 import com.userstipa.screentranslation.domain.text_translate.TextTranslator
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -16,7 +17,8 @@ import javax.inject.Inject
 
 class HomeViewModel @Inject constructor(
     private val dataStorePreferences: DataStorePreferences,
-    private val textTranslation: TextTranslator
+    private val textTranslation: TextTranslator,
+    private val dispatcher: DispatchersProvider
 ) : ViewModel() {
 
     private val _homeUiState = MutableStateFlow(
@@ -31,7 +33,7 @@ class HomeViewModel @Inject constructor(
     val isTranslatorReady: SharedFlow<Boolean> = _isTranslatorReady.asSharedFlow()
 
     fun fetchCurrentLanguages() {
-        viewModelScope.launch {
+        viewModelScope.launch(dispatcher.io) {
             _homeUiState.update { currentUiState ->
                 val sourceLanguage =
                     dataStorePreferences.getLanguage(PreferencesKeys.SOURCE_LANGUAGE)
@@ -46,7 +48,7 @@ class HomeViewModel @Inject constructor(
     }
 
     fun prepareTextTranslator() {
-        viewModelScope.launch {
+        viewModelScope.launch(dispatcher.io) {
             textTranslation.init(
                 onDownload = {
                     viewModelScope.launch {

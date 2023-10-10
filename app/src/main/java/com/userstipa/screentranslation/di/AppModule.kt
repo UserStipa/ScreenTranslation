@@ -5,6 +5,8 @@ import androidx.lifecycle.ViewModelProvider
 import com.userstipa.screentranslation.data.api.TranslateApi
 import com.userstipa.screentranslation.data.local.DataStorePreferences
 import com.userstipa.screentranslation.data.local.DataStorePreferencesImpl
+import com.userstipa.screentranslation.di.dispatchers.DispatchersProvider
+import com.userstipa.screentranslation.di.dispatchers.DispatchersProviderImpl
 import com.userstipa.screentranslation.domain.screen_translator.ScreenTranslator
 import com.userstipa.screentranslation.domain.screen_translator.ScreenTranslatorImpl
 import com.userstipa.screentranslation.domain.screenshot_util.ScreenshotUtil
@@ -86,5 +88,11 @@ class AppModule {
     @Provides
     fun provideViewModelFactory(factory: ViewModelFactory): ViewModelProvider.Factory {
         return factory
+    }
+
+    @Provides
+    @Singleton
+    fun provideDispatcherProvider(): DispatchersProvider {
+        return DispatchersProviderImpl()
     }
 }

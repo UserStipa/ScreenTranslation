@@ -73,7 +73,7 @@ class SelectLanguageFragment : Fragment(), ListActions {
 
     private fun setUi() {
         binding.switchDownload.setOnCheckedChangeListener { _, isChecked ->
-            viewModel.isLanguagesDownload(isChecked)
+            viewModel.setDownloadLanguages(isChecked)
         }
     }
 
