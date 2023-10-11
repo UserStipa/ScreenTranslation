@@ -50,7 +50,7 @@ class HomeViewModel @Inject constructor(
 
     fun prepareTextTranslator() {
         viewModelScope.launch(dispatcher.io) {
-            _homeUiState.update { currentUiState -> currentUiState.copy(isLoading = true) }
+            _homeUiState.update { currentUiState -> currentUiState.copy(isLoading = true, isIconClickable = false, isSelectLanguagesClickable = false) }
             val sourceLanguage = preferences.getLanguage(PreferencesKeys.SOURCE_LANGUAGE)
             val targetLanguage = preferences.getLanguage(PreferencesKeys.TARGET_LANGUAGE)
             val isDownloadEnable = preferences.getBoolean(PreferencesKeys.IS_LANGUAGES_DOWNLOAD)
@@ -67,6 +67,30 @@ class HomeViewModel @Inject constructor(
                         currentUiState.copy(isLoading = false)
                     }
                 }
+            }
+        }
+    }
+
+    fun serviceIsConnect() {
+        viewModelScope.launch {
+            _homeUiState.update { currentUiState ->
+                currentUiState.copy(
+                    isSelectLanguagesClickable = false,
+                    isIconEnable = true,
+                    isIconClickable = true
+                )
+            }
+        }
+    }
+
+    fun serviceIsDisconnect() {
+        viewModelScope.launch {
+            _homeUiState.update { currentUiState ->
+                currentUiState.copy(
+                    isSelectLanguagesClickable = true,
+                    isIconEnable = false,
+                    isIconClickable = true
+                )
             }
         }
     }

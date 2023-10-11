@@ -16,6 +16,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
+import com.google.android.material.snackbar.Snackbar
 import com.userstipa.screentranslation.App
 import com.userstipa.screentranslation.R
 import com.userstipa.screentranslation.data.local.PreferencesKeys
@@ -58,13 +59,20 @@ class HomeFragment : Fragment(), ServiceConnection {
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.fetchCurrentLanguages()
-                viewModel.uiState.collectLatest {
-                    binding.sourceLanguage.text = it.sourceLanguage.title
-                    binding.targetLanguage.text = it.targetLanguage.title
-                    binding.progressBar.isVisible = it.isLoading
-                    binding.launchService.isEnabled = !it.isLoading
-                    binding.sourceLanguage.isEnabled = !it.isLoading
-                    binding.targetLanguage.isEnabled = !it.isLoading
+                viewModel.uiState.collectLatest { uiState ->
+                    uiState.error?.let { Snackbar.make(binding.root, it, Snackbar.LENGTH_LONG).show() }
+                    with(binding) {
+                        progressBar.isVisible = uiState.isLoading
+                        sourceLanguage.text = uiState.sourceLanguage.title
+                        sourceLanguage.isEnabled = uiState.isSelectLanguagesClickable
+                        targetLanguage.text = uiState.targetLanguage.title
+                        targetLanguage.isEnabled = uiState.isSelectLanguagesClickable
+                        iconLaunchService.isClickable = uiState.isIconClickable
+                        iconLaunchService.setImageResource(when(uiState.isIconEnable) {
+                            true -> R.drawable.baseline_translate_enable_24
+                            false -> R.drawable.baseline_translate_disable_24
+                        })
+                    }
                 }
             }
         }
@@ -76,7 +84,7 @@ class HomeFragment : Fragment(), ServiceConnection {
     }
 
     private fun setUi() {
-        binding.launchService.setOnClickListener {
+        binding.iconLaunchService.setOnClickListener {
             if (isServiceConnected) stopService()
             else viewModel.prepareTextTranslator()
         }
@@ -132,18 +140,12 @@ class HomeFragment : Fragment(), ServiceConnection {
 
     override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
         isServiceConnected = true
-        binding.targetLanguage.isEnabled = false
-        binding.sourceLanguage.isEnabled = false
-        binding.launchService.setImageResource(R.drawable.baseline_translate_enable_24)
-        binding.launchService.isClickable = true
+        viewModel.serviceIsConnect()
     }
 
     override fun onServiceDisconnected(name: ComponentName?) {
         isServiceConnected = false
-        binding.targetLanguage.isEnabled = true
-        binding.sourceLanguage.isEnabled = true
-        binding.launchService.setImageResource(R.drawable.baseline_translate_disable_24)
-        binding.launchService.isClickable = true
+        viewModel.serviceIsDisconnect()
     }
 
 }
