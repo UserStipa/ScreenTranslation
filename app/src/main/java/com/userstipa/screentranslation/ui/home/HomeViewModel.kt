@@ -49,30 +49,25 @@ class HomeViewModel @Inject constructor(
 
     fun prepareTextTranslator() {
         viewModelScope.launch(dispatcher.io) {
-            textTranslation.init(
-                onDownload = {
-                    viewModelScope.launch {
-                        _homeUiState.update { it.copy(isLoading = true, isServiceReady = false) }
+            _homeUiState.update { currentUiState -> currentUiState.copy(isLoading = true) }
+            val sourceLanguage = dataStorePreferences.getLanguage(PreferencesKeys.SOURCE_LANGUAGE)
+            val targetLanguage = dataStorePreferences.getLanguage(PreferencesKeys.TARGET_LANGUAGE)
+            val isDownloadLanguageEnable =
+                dataStorePreferences.getBoolean(PreferencesKeys.IS_LANGUAGES_DOWNLOAD)
+            when (textTranslation.init(sourceLanguage, targetLanguage, isDownloadLanguageEnable)) {
+                TextTranslator.State.ERROR -> {
+                    _homeUiState.update { currentUiState ->
+                        currentUiState.copy(isLoading = false, error = "Error")
                     }
-                },
-                onDownloadComplete = {
-                    viewModelScope.launch {
-                        _homeUiState.update { it.copy(isLoading = false, isServiceReady = false) }
+                }
+
+                TextTranslator.State.READY -> {
+                    _isTranslatorReady.emit(true)
+                    _homeUiState.update { currentUiState ->
+                        currentUiState.copy(isLoading = false)
                     }
-                },
-                onError = { exception ->
-                    viewModelScope.launch {
-                        _homeUiState.update {
-                            it.copy(error = "Error: ${exception.message}", isServiceReady = false)
-                        }
-                    }
-                },
-                onReady = {
-                    viewModelScope.launch {
-                        _homeUiState.update { it.copy(isServiceReady = true) }
-                        _isTranslatorReady.emit(true)
-                    }
-                })
+                }
+            }
         }
     }
 }
