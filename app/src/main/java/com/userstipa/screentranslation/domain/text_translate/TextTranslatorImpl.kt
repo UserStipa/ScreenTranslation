@@ -23,7 +23,7 @@ class TextTranslatorImpl @Inject constructor(
         sourceLanguage: Language,
         targetLanguage: Language,
         isDownloadLanguagesEnable: Boolean
-    ): TextTranslator.State {
+    ): TextTranslatorState {
         return suspendCoroutine { continuation ->
             try {
                 val options = TranslatorOptions.Builder()
@@ -35,16 +35,16 @@ class TextTranslatorImpl @Inject constructor(
                 if (isDownloadLanguagesEnable) {
                     translator!!.downloadModelIfNeeded()
                         .addOnCompleteListener {
-                            continuation.resume(TextTranslator.State.READY)
+                            continuation.resume(TextTranslatorState.Ready)
                         }
-                        .addOnFailureListener {
-                            continuation.resume(TextTranslator.State.ERROR)
+                        .addOnFailureListener { exception ->
+                            continuation.resume(TextTranslatorState.Error(exception))
                         }
                 } else {
-                    continuation.resume(TextTranslator.State.READY)
+                    continuation.resume(TextTranslatorState.Ready)
                 }
             } catch (e: Throwable) {
-                continuation.resume(TextTranslator.State.ERROR)
+                continuation.resume(TextTranslatorState.Error(e))
             }
         }
     }

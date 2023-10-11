@@ -6,6 +6,7 @@ import com.userstipa.screentranslation.data.local.DataStorePreferences
 import com.userstipa.screentranslation.data.local.PreferencesKeys
 import com.userstipa.screentranslation.di.dispatchers.DispatchersProvider
 import com.userstipa.screentranslation.domain.text_translate.TextTranslator
+import com.userstipa.screentranslation.domain.text_translate.TextTranslatorState
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -16,15 +17,15 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class HomeViewModel @Inject constructor(
-    private val dataStorePreferences: DataStorePreferences,
+    private val preferences: DataStorePreferences,
     private val textTranslation: TextTranslator,
     private val dispatcher: DispatchersProvider
 ) : ViewModel() {
 
     private val _homeUiState = MutableStateFlow(
         HomeUiState(
-            sourceLanguage = dataStorePreferences.defaultSourceLanguage,
-            targetLanguage = dataStorePreferences.defaultTargetLanguage
+            sourceLanguage = preferences.defaultSourceLanguage,
+            targetLanguage = preferences.defaultTargetLanguage
         )
     )
     val uiState: StateFlow<HomeUiState> = _homeUiState
@@ -36,9 +37,9 @@ class HomeViewModel @Inject constructor(
         viewModelScope.launch(dispatcher.io) {
             _homeUiState.update { currentUiState ->
                 val sourceLanguage =
-                    dataStorePreferences.getLanguage(PreferencesKeys.SOURCE_LANGUAGE)
+                    preferences.getLanguage(PreferencesKeys.SOURCE_LANGUAGE)
                 val targetLanguage =
-                    dataStorePreferences.getLanguage(PreferencesKeys.TARGET_LANGUAGE)
+                    preferences.getLanguage(PreferencesKeys.TARGET_LANGUAGE)
                 currentUiState.copy(
                     sourceLanguage = sourceLanguage,
                     targetLanguage = targetLanguage
@@ -50,18 +51,17 @@ class HomeViewModel @Inject constructor(
     fun prepareTextTranslator() {
         viewModelScope.launch(dispatcher.io) {
             _homeUiState.update { currentUiState -> currentUiState.copy(isLoading = true) }
-            val sourceLanguage = dataStorePreferences.getLanguage(PreferencesKeys.SOURCE_LANGUAGE)
-            val targetLanguage = dataStorePreferences.getLanguage(PreferencesKeys.TARGET_LANGUAGE)
-            val isDownloadLanguageEnable =
-                dataStorePreferences.getBoolean(PreferencesKeys.IS_LANGUAGES_DOWNLOAD)
-            when (textTranslation.init(sourceLanguage, targetLanguage, isDownloadLanguageEnable)) {
-                TextTranslator.State.ERROR -> {
+            val sourceLanguage = preferences.getLanguage(PreferencesKeys.SOURCE_LANGUAGE)
+            val targetLanguage = preferences.getLanguage(PreferencesKeys.TARGET_LANGUAGE)
+            val isDownloadEnable = preferences.getBoolean(PreferencesKeys.IS_LANGUAGES_DOWNLOAD)
+
+            when (val result = textTranslation.init(sourceLanguage, targetLanguage, isDownloadEnable)) {
+                is TextTranslatorState.Error -> {
                     _homeUiState.update { currentUiState ->
-                        currentUiState.copy(isLoading = false, error = "Error")
+                        currentUiState.copy(isLoading = false, error = result.error.message)
                     }
                 }
-
-                TextTranslator.State.READY -> {
+                is TextTranslatorState.Ready -> {
                     _isTranslatorReady.emit(true)
                     _homeUiState.update { currentUiState ->
                         currentUiState.copy(isLoading = false)

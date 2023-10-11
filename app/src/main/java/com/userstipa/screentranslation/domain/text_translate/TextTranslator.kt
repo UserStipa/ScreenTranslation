@@ -5,16 +5,12 @@ import com.userstipa.screentranslation.languages.Language
 
 interface TextTranslator {
 
-    suspend fun init(sourceLanguage: Language, targetLanguage: Language, isDownloadLanguagesEnable: Boolean): State
+    suspend fun init(sourceLanguage: Language, targetLanguage: Language, isDownloadLanguagesEnable: Boolean): TextTranslatorState
 
     suspend fun translateOnline(text: String): ResultWrapper<String>
 
     suspend fun translateOffline(text: String): ResultWrapper<String>
 
     fun clear()
-
-    enum class State {
-        READY, ERROR
-    }
 
 }
