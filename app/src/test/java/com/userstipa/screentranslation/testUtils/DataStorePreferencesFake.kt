@@ -1,4 +1,4 @@
-package com.userstipa.screentranslation.ui.home
+package com.userstipa.screentranslation.testUtils
 
 import com.userstipa.screentranslation.data.local.DataStorePreferences
 import com.userstipa.screentranslation.data.local.PreferencesKeys

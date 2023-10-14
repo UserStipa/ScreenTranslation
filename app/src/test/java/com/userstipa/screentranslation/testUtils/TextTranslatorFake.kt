@@ -1,4 +1,4 @@
-package com.userstipa.screentranslation.ui.home
+package com.userstipa.screentranslation.testUtils
 
 import com.userstipa.screentranslation.domain.text_translate.TextTranslator
 import com.userstipa.screentranslation.domain.text_translate.TextTranslatorState
