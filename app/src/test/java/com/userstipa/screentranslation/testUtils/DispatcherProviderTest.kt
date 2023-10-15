@@ -1,11 +1,11 @@
-package com.userstipa.screentranslation.ui.home
+package com.userstipa.screentranslation.testUtils
 
 import com.userstipa.screentranslation.di.dispatchers.DispatchersProvider
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 
-class TestDispatcherProvider : DispatchersProvider {
+class DispatcherProviderTest : DispatchersProvider {
     @OptIn(ExperimentalCoroutinesApi::class)
     val testDispatcher = UnconfinedTestDispatcher()
     override val main: CoroutineDispatcher
