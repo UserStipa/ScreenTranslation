@@ -25,12 +25,17 @@ class TextScannerImpl : TextScanner {
                         continuation.resume(ResultWrapper.Error(message))
                     }
                     .addOnSuccessListener {
-                        continuation.resume(ResultWrapper.Success(it.text))
+                        val text = formatText(it.text)
+                        continuation.resume(ResultWrapper.Success(text))
                     }
             } catch (e: Throwable) {
                 continuation.resume(ResultWrapper.Error(e.message ?: "Something went wrong... Exception caused by ${this::class.simpleName}"))
             }
         }
+    }
+
+    private fun formatText(text: String): String {
+        return text.replace("-\n", "").replace("\n", " ")
     }
 
     override fun clear() {
