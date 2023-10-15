@@ -1,11 +1,11 @@
 package com.userstipa.screentranslation.ui.home
 
-import com.userstipa.screentranslation.testUtils.DataStorePreferencesFake
-import com.userstipa.screentranslation.testUtils.DispatcherProviderTest
-import com.userstipa.screentranslation.testUtils.TextTranslatorFake
 import com.userstipa.screentranslation.data.local.PreferencesKeys
 import com.userstipa.screentranslation.domain.text_translate.TextTranslatorState
 import com.userstipa.screentranslation.languages.Language
+import com.userstipa.screentranslation.testUtils.DataStorePreferencesFake
+import com.userstipa.screentranslation.testUtils.DispatcherProviderTest
+import com.userstipa.screentranslation.testUtils.TextTranslatorFake
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.launch

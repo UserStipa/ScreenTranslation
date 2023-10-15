@@ -82,7 +82,7 @@ class TextTranslatorImpl @Inject constructor(
                 ResultWrapper.Success(networkBody.translatedText)
             } else {
                 val message =
-                    "Error code: ${networkResponse.code()} Message: ${networkResponse.message()}"
+                    "Error code: ${networkResponse.code()}"
                 ResultWrapper.Error(message)
             }
         } catch (e: Throwable) {
